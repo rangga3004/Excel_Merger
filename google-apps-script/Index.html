@@ -468,6 +468,162 @@
             display: none;
         }
 
+        /* Column Selector Section */
+        .column-selector-section {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .column-selector-section.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .column-selector-section h3 {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-light);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .column-selector-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .select-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .select-actions button {
+            padding: 8px 16px;
+            border: 2px solid var(--aha-blue-primary);
+            background: transparent;
+            color: var(--aha-blue-primary);
+            border-radius: var(--radius-full);
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .select-actions button:hover {
+            background: var(--aha-blue-primary);
+            color: white;
+        }
+
+        .column-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 8px;
+            max-height: 250px;
+            overflow-y: auto;
+            padding: 4px;
+        }
+
+        .column-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 12px;
+            background: rgba(37, 99, 235, 0.05);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+        }
+
+        .column-item:hover {
+            background: rgba(37, 99, 235, 0.1);
+        }
+
+        .column-item.selected {
+            background: rgba(37, 99, 235, 0.15);
+            border-color: var(--aha-blue-primary);
+        }
+
+        .column-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--aha-blue-primary);
+            cursor: pointer;
+        }
+
+        .column-item label {
+            flex: 1;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #475569;
+            cursor: pointer;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .column-count {
+            text-align: center;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #E2E8F0;
+        }
+
+        .column-count span {
+            font-size: 0.9rem;
+            color: #64748B;
+            font-weight: 500;
+        }
+
+        .column-count strong {
+            color: var(--aha-blue-primary);
+        }
+
+        .proceed-btn {
+            display: block;
+            width: 100%;
+            margin-top: 16px;
+            padding: 14px 32px;
+            background: var(--button-dark);
+            color: white;
+            border: none;
+            border-radius: var(--radius-full);
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(30, 58, 95, 0.3);
+        }
+
+        .proceed-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(30, 58, 95, 0.4);
+            background: #162D4A;
+        }
+
+        .proceed-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .column-grid::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .column-grid::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .column-grid::-webkit-scrollbar-thumb {
+            background: rgba(37, 99, 235, 0.3);
+            border-radius: 3px;
+        }
+
         @media (max-width: 480px) {
             .container {
                 border-radius: var(--radius-lg);
@@ -546,6 +702,21 @@
                 <div class="file-list" id="fileList"></div>
             </div>
 
+            <div class="column-selector-section" id="columnSelectorSection">
+                <h3>Pilih Kolom untuk Download</h3>
+                <div class="column-selector-card">
+                    <div class="select-actions">
+                        <button type="button" id="selectAllBtn">✓ Select All</button>
+                        <button type="button" id="deselectAllBtn">✗ Deselect All</button>
+                    </div>
+                    <div class="column-grid" id="columnGrid"></div>
+                    <div class="column-count">
+                        <span><strong id="selectedCount">0</strong> dari <strong id="totalCount">0</strong> kolom dipilih</span>
+                    </div>
+                    <button class="proceed-btn" id="proceedBtn">Download Kolom Terpilih</button>
+                </div>
+            </div>
+
             <div class="result-section" id="resultSection">
                 <div class="result-card">
                     <div class="result-icon">
@@ -615,6 +786,8 @@
 
         let mergedWorkbook = null;
         let outputFileName = 'merged_excel.xlsx';
+        let allMergedData = [];  // Store all data for column filtering
+        let headerRow = null;    // Store header row separately
 
         // Event Listeners
         uploadZone.addEventListener('click', () => fileInput.click());
@@ -625,6 +798,19 @@
         downloadBtn.addEventListener('click', downloadMergedFile);
         resetBtn.addEventListener('click', resetApp);
         errorResetBtn.addEventListener('click', resetApp);
+
+        // Column selector elements
+        const columnSelectorSection = document.getElementById('columnSelectorSection');
+        const columnGrid = document.getElementById('columnGrid');
+        const selectAllBtn = document.getElementById('selectAllBtn');
+        const deselectAllBtn = document.getElementById('deselectAllBtn');
+        const proceedBtn = document.getElementById('proceedBtn');
+        const selectedCountEl = document.getElementById('selectedCount');
+        const totalCountEl = document.getElementById('totalCount');
+
+        selectAllBtn.addEventListener('click', () => toggleAllColumns(true));
+        deselectAllBtn.addEventListener('click', () => toggleAllColumns(false));
+        proceedBtn.addEventListener('click', downloadMergedFile);
 
         function handleDragOver(e) {
             e.preventDefault();
@@ -692,7 +878,7 @@
                 updateProgress(40, `Memproses ${excelFiles.length} file Excel...`);
 
                 const allData = [];
-                let headerRow = null;
+                let currentHeaderRow = null;
                 let totalRows = 0;
                 const fileStats = [];
 
@@ -710,14 +896,14 @@
                     if (jsonData.length === 0) continue;
 
                     let dataRows;
-                    if (headerRow === null) {
-                        headerRow = jsonData[0];
+                    if (currentHeaderRow === null) {
+                        currentHeaderRow = jsonData[0];
                         dataRows = jsonData;
                     } else {
                         dataRows = jsonData.slice(1);
                     }
 
-                    const rowCount = dataRows.length - (headerRow === jsonData[0] ? 1 : 0);
+                    const rowCount = dataRows.length - (currentHeaderRow === jsonData[0] ? 1 : 0);
                     fileStats.push({ name: excelFile.name, rows: rowCount });
                     totalRows += rowCount;
                     allData.push(...dataRows);
@@ -725,18 +911,16 @@
 
                 displayFileList(fileStats);
 
-                updateProgress(85, 'Membuat file Excel gabungan...');
+                updateProgress(85, 'Menyiapkan pemilihan kolom...');
 
-                mergedWorkbook = XLSX.utils.book_new();
-                const mergedSheet = XLSX.utils.aoa_to_sheet(allData);
-                const colWidths = calculateColumnWidths(allData);
-                mergedSheet['!cols'] = colWidths;
-                XLSX.utils.book_append_sheet(mergedWorkbook, mergedSheet, 'Merged Data');
+                // Store data globally for column filtering
+                allMergedData = allData;
+                headerRow = currentHeaderRow;
 
                 updateProgress(100, 'Selesai!');
 
                 setTimeout(() => {
-                    showResult(excelFiles.length, totalRows);
+                    showColumnSelector(currentHeaderRow, excelFiles.length, totalRows);
                 }, 500);
 
             } catch (error) {
@@ -841,11 +1025,25 @@
         }
 
         function downloadMergedFile() {
-            if (!mergedWorkbook) {
-                showError('Tidak ada file untuk didownload');
+            const selectedColumns = getSelectedColumns();
+            if (selectedColumns.length === 0) {
+                showError('Pilih minimal 1 kolom untuk download');
                 return;
             }
+
             try {
+                // Filter data by selected columns
+                const filteredData = allMergedData.map(row => 
+                    selectedColumns.map(colIndex => row[colIndex] !== undefined ? row[colIndex] : '')
+                );
+
+                // Create workbook with filtered data
+                mergedWorkbook = XLSX.utils.book_new();
+                const mergedSheet = XLSX.utils.aoa_to_sheet(filteredData);
+                const colWidths = calculateColumnWidths(filteredData);
+                mergedSheet['!cols'] = colWidths;
+                XLSX.utils.book_append_sheet(mergedWorkbook, mergedSheet, 'Merged Data');
+
                 const wbout = XLSX.write(mergedWorkbook, { bookType: 'xlsx', type: 'array' });
                 const blob = new Blob([wbout], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
                 saveAs(blob, outputFileName);
@@ -857,15 +1055,80 @@
 
         function resetApp() {
             mergedWorkbook = null;
+            allMergedData = [];
+            headerRow = null;
             outputFileName = 'merged_excel.xlsx';
             fileInput.value = '';
             uploadZone.classList.remove('hidden');
             progressSection.classList.remove('active');
             fileListSection.classList.remove('active');
+            columnSelectorSection.classList.remove('active');
             resultSection.classList.remove('active');
             errorSection.classList.remove('active');
             fileList.innerHTML = '';
+            columnGrid.innerHTML = '';
             updateProgress(0, 'Menunggu...');
+        }
+
+        // Column Selector Functions
+        function showColumnSelector(headers, fileCount, rowCount) {
+            progressSection.classList.remove('active');
+            columnSelectorSection.classList.add('active');
+
+            // Render column checkboxes
+            columnGrid.innerHTML = headers.map((header, index) => {
+                const displayName = header || `Kolom ${index + 1}`;
+                return `
+                    <div class="column-item selected" data-index="${index}">
+                        <input type="checkbox" id="col_${index}" checked>
+                        <label for="col_${index}" title="${displayName}">${displayName}</label>
+                    </div>
+                `;
+            }).join('');
+
+            // Add click handlers
+            document.querySelectorAll('.column-item').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    if (e.target.tagName !== 'INPUT') {
+                        const checkbox = item.querySelector('input[type="checkbox"]');
+                        checkbox.checked = !checkbox.checked;
+                    }
+                    item.classList.toggle('selected', item.querySelector('input').checked);
+                    updateColumnCount();
+                });
+            });
+
+            totalCountEl.textContent = headers.length;
+            updateColumnCount();
+
+            // Store stats for result display
+            columnSelectorSection.dataset.fileCount = fileCount;
+            columnSelectorSection.dataset.rowCount = rowCount;
+        }
+
+        function toggleAllColumns(selectAll) {
+            document.querySelectorAll('.column-item').forEach(item => {
+                const checkbox = item.querySelector('input[type="checkbox"]');
+                checkbox.checked = selectAll;
+                item.classList.toggle('selected', selectAll);
+            });
+            updateColumnCount();
+        }
+
+        function getSelectedColumns() {
+            const selected = [];
+            document.querySelectorAll('.column-item input:checked').forEach(checkbox => {
+                const item = checkbox.closest('.column-item');
+                selected.push(parseInt(item.dataset.index));
+            });
+            return selected.sort((a, b) => a - b);
+        }
+
+        function updateColumnCount() {
+            const count = document.querySelectorAll('.column-item input:checked').length;
+            selectedCountEl.textContent = count;
+            proceedBtn.disabled = count === 0;
+            proceedBtn.textContent = count === 0 ? 'Pilih Kolom Terlebih Dahulu' : `Download ${count} Kolom Terpilih`;
         }
 
         console.log('Excel Merger (AHA Commerce) initialized');
