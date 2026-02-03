@@ -1,0 +1,488 @@
+/* AHA Commerce Brand Colors */
+:root {
+    --aha-blue-primary: #2563EB;
+    --aha-blue-dark: #1D4ED8;
+    --aha-blue-darker: #1E40AF;
+    --aha-blue-light: #3B82F6;
+    --aha-indigo: #4F46E5;
+    --bg-gradient-start: #2563EB;
+    --bg-gradient-end: #1D4ED8;
+    --text-white: #FFFFFF;
+    --text-light: rgba(255, 255, 255, 0.9);
+    --text-muted: rgba(255, 255, 255, 0.7);
+    --card-bg: #FFFBF0;
+    --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    --button-dark: #1E3A5F;
+    --success: #10B981;
+    --success-bg: rgba(16, 185, 129, 0.15);
+    --error: #EF4444;
+    --error-bg: rgba(239, 68, 68, 0.15);
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 20px;
+    --radius-xl: 28px;
+    --radius-full: 9999px;
+}
+
+/* Reset & Base */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+}
+
+/* Container */
+.container {
+    width: 100%;
+    max-width: 580px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: var(--radius-xl);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    overflow: hidden;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+}
+
+/* Header */
+.header {
+    padding: 28px 28px 20px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.logo h1 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--text-white);
+    letter-spacing: -0.5px;
+}
+
+.subtitle {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* Main */
+.main {
+    padding: 28px;
+}
+
+/* Upload Zone - Card Style like AHA bubbles */
+.upload-zone {
+    background: var(--card-bg);
+    border-radius: var(--radius-lg);
+    padding: 40px 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: var(--card-shadow);
+    border: none;
+}
+
+.upload-zone:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+}
+
+.upload-zone.drag-over {
+    transform: translateY(-4px);
+    box-shadow: 0 0 0 3px var(--aha-blue-light), 0 8px 30px rgba(0, 0, 0, 0.2);
+}
+
+.upload-content {
+    pointer-events: none;
+}
+
+.upload-icon {
+    color: var(--aha-blue-primary);
+    margin-bottom: 16px;
+}
+
+.upload-zone h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--aha-blue-darker);
+}
+
+.upload-zone p {
+    color: #64748B;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.browse-link {
+    color: var(--aha-blue-primary);
+    font-weight: 700;
+    text-decoration: underline;
+}
+
+.hint {
+    margin-top: 12px;
+    font-size: 0.8rem !important;
+    color: #94A3B8 !important;
+}
+
+/* Progress Section */
+.progress-section {
+    display: none;
+    padding: 20px;
+    background: var(--card-bg);
+    border-radius: var(--radius-lg);
+    margin-bottom: 20px;
+    box-shadow: var(--card-shadow);
+}
+
+.progress-section.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.progress-title {
+    font-weight: 600;
+    color: var(--aha-blue-darker);
+}
+
+.progress-percent {
+    color: var(--aha-blue-primary);
+    font-weight: 700;
+}
+
+.progress-bar {
+    height: 10px;
+    background: #E2E8F0;
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--aha-blue-primary), var(--aha-indigo));
+    border-radius: var(--radius-full);
+    transition: width 0.3s ease;
+}
+
+.progress-status {
+    font-size: 0.85rem;
+    color: #64748B;
+    font-weight: 500;
+}
+
+/* File List Section */
+.file-list-section {
+    display: none;
+    margin-top: 20px;
+}
+
+.file-list-section.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+.file-list-section h3 {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-light);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.file-list {
+    max-height: 180px;
+    overflow-y: auto;
+    background: var(--card-bg);
+    border-radius: var(--radius-md);
+    padding: 8px;
+    box-shadow: var(--card-shadow);
+}
+
+.file-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    color: #475569;
+    font-weight: 500;
+    transition: background 0.2s ease;
+}
+
+.file-item:hover {
+    background: rgba(37, 99, 235, 0.08);
+}
+
+.file-item-icon {
+    color: var(--aha-blue-primary);
+    flex-shrink: 0;
+}
+
+.file-item-name {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.file-item-rows {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--aha-blue-primary);
+    background: rgba(37, 99, 235, 0.1);
+    padding: 3px 10px;
+    border-radius: var(--radius-full);
+}
+
+/* Result Section */
+.result-section {
+    display: none;
+    text-align: center;
+    padding: 28px 0;
+}
+
+.result-section.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+.result-card {
+    background: var(--card-bg);
+    border-radius: var(--radius-lg);
+    padding: 32px 24px;
+    box-shadow: var(--card-shadow);
+}
+
+.result-icon {
+    color: var(--success);
+    margin-bottom: 16px;
+}
+
+.result-section h2 {
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+    color: var(--aha-blue-darker);
+    font-weight: 800;
+}
+
+.result-stats {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.stat-item {
+    background: linear-gradient(135deg, var(--aha-blue-primary), var(--aha-indigo));
+    padding: 14px 24px;
+    border-radius: var(--radius-md);
+    text-align: center;
+    min-width: 120px;
+}
+
+.stat-value {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--text-white);
+}
+
+.stat-label {
+    font-size: 0.7rem;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+
+/* Buttons - AHA Style */
+.download-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 32px;
+    background: var(--button-dark);
+    color: white;
+    border: none;
+    border-radius: var(--radius-full);
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(30, 58, 95, 0.3);
+}
+
+.download-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(30, 58, 95, 0.4);
+    background: #162D4A;
+}
+
+.reset-btn {
+    display: block;
+    margin: 16px auto 0;
+    padding: 10px 24px;
+    background: transparent;
+    color: #64748B;
+    border: 2px solid #E2E8F0;
+    border-radius: var(--radius-full);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.reset-btn:hover {
+    background: #F1F5F9;
+    color: var(--aha-blue-darker);
+    border-color: var(--aha-blue-primary);
+}
+
+/* Error Section */
+.error-section {
+    display: none;
+    text-align: center;
+    padding: 28px 0;
+}
+
+.error-section.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+.error-card {
+    background: var(--card-bg);
+    border-radius: var(--radius-lg);
+    padding: 32px 24px;
+    box-shadow: var(--card-shadow);
+}
+
+.error-icon {
+    color: var(--error);
+    margin-bottom: 16px;
+}
+
+.error-section h2 {
+    color: var(--error);
+    margin-bottom: 12px;
+    font-weight: 800;
+}
+
+.error-message {
+    color: #64748B;
+    background: var(--error-bg);
+    padding: 12px 16px;
+    border-radius: var(--radius-md);
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* Footer */
+.footer {
+    padding: 16px 28px;
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.footer a {
+    color: var(--text-white);
+    text-decoration: none;
+    font-weight: 700;
+}
+
+/* Scrollbar */
+.file-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.file-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.file-list::-webkit-scrollbar-thumb {
+    background: rgba(37, 99, 235, 0.3);
+    border-radius: 3px;
+}
+
+.file-list::-webkit-scrollbar-thumb:hover {
+    background: rgba(37, 99, 235, 0.5);
+}
+
+/* Hidden state for upload zone */
+.upload-zone.hidden {
+    display: none;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .container {
+        border-radius: var(--radius-lg);
+    }
+
+    .header,
+    .main {
+        padding: 20px;
+    }
+
+    .upload-zone {
+        padding: 32px 16px;
+    }
+
+    .logo h1 {
+        font-size: 1.4rem;
+    }
+
+    .result-stats {
+        gap: 10px;
+    }
+
+    .stat-item {
+        padding: 12px 18px;
+        min-width: 100px;
+    }
+}
