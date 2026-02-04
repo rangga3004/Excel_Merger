@@ -679,6 +679,38 @@
             color: white;
         }
 
+        .format-hint {
+            font-size: 0.75rem;
+            color: #64748B;
+            margin-top: 6px;
+            text-align: center;
+        }
+
+        .format-hint code {
+            background: #F1F5F9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Consolas', monospace;
+        }
+
+        .reset-format-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: var(--radius-sm);
+            background: #F1F5F9;
+            color: #64748B;
+            font-family: inherit;
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .reset-format-btn:hover {
+            background: #E2E8F0;
+            color: #475569;
+        }
+
         .column-grid::-webkit-scrollbar {
             width: 6px;
         }
@@ -880,7 +912,11 @@
                         <button type="button" class="swap-format-btn" id="swapFormatBtn">
                             🔄 Swap Format (. ↔ ,)
                         </button>
+                        <button type="button" class="reset-format-btn" id="resetFormatBtn">↺ Reset</button>
                     </div>
+                    <p class="format-hint">
+                        Contoh: <code>1.234,56</code> ↔ <code>1,234.56</code>
+                    </p>
                     <button class="proceed-btn" id="proceedBtn">Download Kolom Terpilih</button>
                 </div>
             </div>
@@ -969,6 +1005,7 @@
         let headerRow = null;    // Store header row separately
         let currentMode = 'single'; // 'single' or 'merge'
         let formatSwapped = false; // Track if format has been swapped
+        let sessionFormatPreference = false; // Persist across uploads in same session
 
         // Tab Navigation
         tabBtns.forEach(btn => {
@@ -1013,12 +1050,14 @@
         const totalCountEl = document.getElementById('totalCount');
         const columnSearchInput = document.getElementById('columnSearchInput');
         const swapFormatBtn = document.getElementById('swapFormatBtn');
+        const resetFormatBtn = document.getElementById('resetFormatBtn');
 
         selectAllBtn.addEventListener('click', () => toggleAllColumns(true));
         deselectAllBtn.addEventListener('click', () => toggleAllColumns(false));
         proceedBtn.addEventListener('click', downloadMergedFile);
         columnSearchInput.addEventListener('input', filterColumns);
         swapFormatBtn.addEventListener('click', swapNumberFormat);
+        resetFormatBtn.addEventListener('click', resetFormatToDefault);
 
         function handleDragOver(e, zone) {
             e.preventDefault();
@@ -1379,6 +1418,16 @@
             // Store stats for result display
             columnSelectorSection.dataset.fileCount = fileCount;
             columnSelectorSection.dataset.rowCount = rowCount;
+
+            // Auto-apply session format preference
+            if (sessionFormatPreference && !formatSwapped) {
+                swapNumberFormat();
+            }
+            // Sync button state with current formatSwapped
+            swapFormatBtn.classList.toggle('swapped', formatSwapped);
+            swapFormatBtn.innerHTML = formatSwapped
+                ? '✓ Format Sudah Di-swap'
+                : '🔄 Swap Format (. ↔ ,)';
         }
 
         function toggleAllColumns(selectAll) {
@@ -1415,12 +1464,25 @@
                 }
             }
 
-            // Toggle button state
+            // Toggle button state and save session preference
             formatSwapped = !formatSwapped;
+            sessionFormatPreference = formatSwapped; // Persist for next upload
             swapFormatBtn.classList.toggle('swapped', formatSwapped);
             swapFormatBtn.innerHTML = formatSwapped
                 ? '✓ Format Sudah Di-swap'
                 : '🔄 Swap Format (. ↔ ,)';
+        }
+
+        function resetFormatToDefault() {
+            // If currently swapped, swap back first
+            if (formatSwapped) {
+                swapNumberFormat(); // This will toggle back
+            }
+            // Clear session preference
+            sessionFormatPreference = false;
+            formatSwapped = false;
+            swapFormatBtn.classList.remove('swapped');
+            swapFormatBtn.innerHTML = '🔄 Swap Format (. ↔ ,)';
         }
 
         function getSelectedColumns() {
