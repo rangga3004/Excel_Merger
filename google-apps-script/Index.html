@@ -753,6 +753,46 @@
             color: #475569;
         }
 
+        .row-settings {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            padding: 10px 12px;
+            background: #F8FAFC;
+            border-radius: var(--radius-md);
+            border: 1px solid #E2E8F0;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .row-settings-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        .row-settings label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            color: #64748B;
+        }
+
+        .row-settings input[type="number"] {
+            width: 60px;
+            padding: 4px 8px;
+            border: 1px solid #CBD5E1;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            text-align: center;
+        }
+
+        .row-settings input[type="number"]:focus {
+            outline: none;
+            border-color: var(--blue-500);
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+        }
 
         .column-grid::-webkit-scrollbar {
             width: 6px;
@@ -951,6 +991,11 @@
                         <span><strong id="selectedCount">0</strong> dari <strong id="totalCount">0</strong> kolom
                             dipilih</span>
                     </div>
+                    <div class="row-settings">
+                        <span class="row-settings-title">📊 Pengaturan Baris</span>
+                        <label>Header di row: <input type="number" id="headerRowInput" value="1" min="1"></label>
+                        <label>Data mulai row: <input type="number" id="dataStartRowInput" value="2" min="2"></label>
+                    </div>
                     <div class="format-actions">
                         <button type="button" class="swap-format-btn" id="swapFormatBtn">
                             🔄 Swap Format (. ↔ ,)
@@ -1061,7 +1106,12 @@
         const formatBadge = document.getElementById('formatBadge');
         const previewHeader = document.getElementById('previewHeader');
         const previewBody = document.getElementById('previewBody');
+        const headerRowInput = document.getElementById('headerRowInput');
+        const dataStartRowInput = document.getElementById('dataStartRowInput');
 
+        // Row settings (0-based indices)
+        let headerRowIndex = 0;  // Default: row 1 (index 0)
+        let dataStartRowIndex = 1;  // Default: row 2 (index 1)
 
         // Tab Navigation
         tabBtns.forEach(btn => {
@@ -1112,6 +1162,59 @@
         proceedBtn.addEventListener('click', downloadMergedFile);
         columnSearchInput.addEventListener('input', filterColumns);
         swapFormatBtn.addEventListener('click', swapNumberFormat);
+
+        // Row settings event listeners
+        headerRowInput.addEventListener('change', handleRowSettingsChange);
+        dataStartRowInput.addEventListener('change', handleRowSettingsChange);
+
+        function handleRowSettingsChange() {
+            const newHeaderRow = parseInt(headerRowInput.value) || 1;
+            const newDataStart = parseInt(dataStartRowInput.value) || 2;
+
+            // Validate: data must start after header
+            if (newDataStart <= newHeaderRow) {
+                dataStartRowInput.value = newHeaderRow + 1;
+            }
+
+            // Update indices (convert to 0-based)
+            headerRowIndex = Math.max(0, newHeaderRow - 1);
+            dataStartRowIndex = Math.max(headerRowIndex + 1, (parseInt(dataStartRowInput.value) || 2) - 1);
+
+            // Refresh column names if header changed
+            if (allMergedData.length > 0) {
+                refreshColumnHeaders();
+                updatePreview();
+            }
+        }
+
+        function refreshColumnHeaders() {
+            const headers = allMergedData[headerRowIndex] || [];
+            columnGrid.innerHTML = headers.map((header, index) => {
+                const displayName = header || `Kolom ${index + 1}`;
+                return `
+                    <div class="column-item selected" data-index="${index}">
+                        <input type="checkbox" id="col_${index}" checked>
+                        <label for="col_${index}" title="${displayName}">${displayName}</label>
+                    </div>
+                `;
+            }).join('');
+
+            // Re-attach click handlers
+            document.querySelectorAll('.column-item').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'LABEL') {
+                        const checkbox = item.querySelector('input[type="checkbox"]');
+                        checkbox.checked = !checkbox.checked;
+                    }
+                    item.classList.toggle('selected', item.querySelector('input').checked);
+                    updateColumnCount();
+                    updatePreview();
+                });
+            });
+
+            totalCountEl.textContent = headers.length;
+            updateColumnCount();
+        }
 
         function handleDragOver(e, zone) {
             e.preventDefault();
@@ -1395,10 +1498,20 @@
             }
 
             try {
-                // Filter data by selected columns
-                const filteredData = allMergedData.map(row =>
+                // Get header row
+                const headerData = allMergedData[headerRowIndex] || [];
+                const filteredHeader = selectedColumns.map(colIndex =>
+                    headerData[colIndex] !== undefined ? headerData[colIndex] : ''
+                );
+
+                // Get data rows (from dataStartRowIndex onwards)
+                const dataRows = allMergedData.slice(dataStartRowIndex);
+                const filteredDataRows = dataRows.map(row =>
                     selectedColumns.map(colIndex => row[colIndex] !== undefined ? row[colIndex] : '')
                 );
+
+                // Combine header + data
+                const filteredData = [filteredHeader, ...filteredDataRows];
 
                 // Create workbook with filtered data
                 mergedWorkbook = XLSX.utils.book_new();
@@ -1436,6 +1549,11 @@
             fileList.innerHTML = '';
             columnGrid.innerHTML = '';
             updateProgress(0, 'Menunggu...');
+            // Reset row settings
+            headerRowIndex = 0;
+            dataStartRowIndex = 1;
+            headerRowInput.value = 1;
+            dataStartRowInput.value = 2;
         }
 
         // Column Selector Functions
@@ -1534,9 +1652,9 @@
                 return;
             }
 
-            // Filter headers and rows by selected columns
-            const headers = selectedIndices.map(i => allMergedData[0][i]);
-            const previewRows = allMergedData.slice(1, 3).map(row =>
+            // Filter headers and rows by selected columns, using row settings
+            const headers = selectedIndices.map(i => (allMergedData[headerRowIndex] || [])[i]);
+            const previewRows = allMergedData.slice(dataStartRowIndex, dataStartRowIndex + 2).map(row =>
                 selectedIndices.map(i => row[i])
             );
 
@@ -1562,8 +1680,8 @@
         }
 
         function swapNumberFormat() {
-            // Swap . and , in all data cells (skip header row at index 0)
-            for (let i = 1; i < allMergedData.length; i++) {
+            // Swap . and , in all data cells (skip header, start from data row)
+            for (let i = dataStartRowIndex; i < allMergedData.length; i++) {
                 for (let j = 0; j < allMergedData[i].length; j++) {
                     let cell = allMergedData[i][j];
                     if (typeof cell === 'string' && /[\d.,]/.test(cell)) {
@@ -1576,12 +1694,15 @@
                 }
             }
 
-            // Toggle button state and save session preference
+            // Toggle button state
             formatSwapped = !formatSwapped;
             swapFormatBtn.classList.toggle('swapped', formatSwapped);
             swapFormatBtn.innerHTML = formatSwapped
                 ? '✓ Format Sudah Di-swap'
                 : '🔄 Swap Format (. ↔ ,)';
+
+            // Update preview
+            updatePreview();
         }
 
         function resetFormatToDefault() {
