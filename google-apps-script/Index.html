@@ -1544,7 +1544,7 @@
                 ).join('') + '</tr>'
             ).join('');
         }
-function filterColumns() {
+        function filterColumns() {
             const searchTerm = columnSearchInput.value.toLowerCase().trim();
             document.querySelectorAll('.column-item').forEach(item => {
                 const label = item.querySelector('label').textContent.toLowerCase();
