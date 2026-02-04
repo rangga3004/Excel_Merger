@@ -892,6 +892,391 @@
             color: var(--text-white);
         }
 
+        /* Google Sheets Export Section */
+        .export-options {
+            margin-top: 16px;
+            padding: 16px;
+            background: #F8FAFC;
+            border-radius: var(--radius-md);
+            border: 1px solid #E2E8F0;
+        }
+
+        .export-options-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #475569;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .export-mode-selector {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .export-mode-btn {
+            flex: 1;
+            padding: 10px 12px;
+            border: 2px solid #E2E8F0;
+            border-radius: var(--radius-md);
+            background: white;
+            color: #64748B;
+            font-family: inherit;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .export-mode-btn:hover {
+            border-color: var(--aha-blue-primary);
+            color: var(--aha-blue-primary);
+        }
+
+        .export-mode-btn.active {
+            background: var(--aha-blue-primary);
+            border-color: var(--aha-blue-primary);
+            color: white;
+        }
+
+        .sheets-config {
+            display: none;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #E2E8F0;
+        }
+
+        .sheets-config.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .sheets-input-group {
+            margin-bottom: 12px;
+        }
+
+        .sheets-input-group label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #64748B;
+            margin-bottom: 6px;
+        }
+
+        .sheets-input-group input[type="text"],
+        .sheets-input-group input[type="number"],
+        .sheets-input-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #E2E8F0;
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
+        }
+
+        .sheets-input-group input:focus,
+        .sheets-input-group select:focus {
+            outline: none;
+            border-color: var(--aha-blue-primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .sheets-input-group input::placeholder {
+            color: #94A3B8;
+        }
+
+        .fetch-sheets-btn {
+            width: 100%;
+            padding: 10px 16px;
+            background: var(--aha-blue-primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 8px;
+        }
+
+        .fetch-sheets-btn:hover {
+            background: var(--aha-blue-dark);
+        }
+
+        .fetch-sheets-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .sheets-status {
+            margin-top: 8px;
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .sheets-status.success {
+            background: var(--success-bg);
+            color: #065F46;
+        }
+
+        .sheets-status.error {
+            background: var(--error-bg);
+            color: #991B1B;
+        }
+
+        .sheets-status.loading {
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--aha-blue-primary);
+        }
+
+        .export-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .export-sheets-btn {
+            flex: 1;
+            padding: 12px 20px;
+            background: #0F9D58;
+            color: white;
+            border: none;
+            border-radius: var(--radius-full);
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .export-sheets-btn:hover {
+            background: #0B8043;
+            transform: translateY(-1px);
+        }
+
+        .export-sheets-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Loading Overlay for Export Operations */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            backdrop-filter: blur(4px);
+        }
+
+        .loading-modal {
+            background: white;
+            border-radius: 20px;
+            padding: 32px 40px;
+            text-align: center;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3);
+            max-width: 320px;
+            width: 90%;
+        }
+
+        .loading-spinner {
+            width: 56px;
+            height: 56px;
+            border: 4px solid #E2E8F0;
+            border-top-color: var(--aha-blue-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1E293B;
+            margin-bottom: 8px;
+        }
+
+        .loading-status {
+            font-size: 0.85rem;
+            color: #64748B;
+            margin-bottom: 16px;
+        }
+
+        .loading-progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #E2E8F0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .loading-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--aha-blue-primary), #0F9D58);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+            animation: progressPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes progressPulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        .loading-percent {
+            font-size: 0.75rem;
+            color: #94A3B8;
+            margin-top: 8px;
+        }
+
+        .loading-dismiss-btn {
+            margin-top: 16px;
+            padding: 8px 20px;
+            background: transparent;
+            border: 1px solid #E2E8F0;
+            border-radius: 6px;
+            color: #64748B;
+            font-family: inherit;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .loading-dismiss-btn:hover {
+            background: #F1F5F9;
+            border-color: #CBD5E1;
+            color: #475569;
+        }
+
+        /* Toast Notification */
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9998;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            background: white;
+            border-radius: 12px;
+            padding: 16px 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 300px;
+            max-width: 400px;
+            animation: slideInRight 0.3s ease;
+            border-left: 4px solid #0F9D58;
+        }
+
+        .toast.error {
+            border-left-color: #DC2626;
+        }
+
+        .toast-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 700;
+            color: #1E293B;
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+
+        .toast-message {
+            font-size: 0.8rem;
+            color: #64748B;
+        }
+
+        .toast-action {
+            background: #0F9D58;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .toast-action:hover {
+            background: #0B8043;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: #94A3B8;
+            cursor: pointer;
+            padding: 4px;
+            font-size: 18px;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
         @media (max-width: 480px) {
             .container {
                 border-radius: var(--radius-lg);
@@ -1079,7 +1464,72 @@
                     <p class="format-hint">
                         Contoh: <code>1.234,56</code> ↔ <code>1,234.56</code>
                     </p>
-                    <button class="proceed-btn" id="proceedBtn">Download Kolom Terpilih</button>
+
+                    <!-- Export Options Section -->
+                    <div class="export-options">
+                        <div class="export-options-title">📤 Export Destination</div>
+                        <div class="export-mode-selector">
+                            <button type="button" class="export-mode-btn active" data-mode="excel">
+                                📄 Download Excel
+                            </button>
+                            <button type="button" class="export-mode-btn" data-mode="sheets">
+                                📊 Google Sheets
+                            </button>
+                        </div>
+
+                        <!-- Excel Download (default) -->
+                        <div class="export-excel-config" id="exportExcelConfig">
+                            <button class="proceed-btn" id="proceedBtn">📥 Download Kolom Terpilih</button>
+                        </div>
+
+                        <!-- Google Sheets Config -->
+                        <div class="sheets-config" id="sheetsConfig">
+                            <div class="export-mode-selector" style="margin-bottom: 12px;">
+                                <button type="button" class="export-mode-btn active" data-sheets-mode="new">
+                                    ✨ Spreadsheet Baru
+                                </button>
+                                <button type="button" class="export-mode-btn" data-sheets-mode="existing">
+                                    📝 Spreadsheet Existing
+                                </button>
+                            </div>
+
+                            <!-- New Spreadsheet (simple) -->
+                            <div class="sheets-new-config" id="sheetsNewConfig">
+                                <button class="export-sheets-btn" id="exportNewSheetBtn">
+                                    📊 Buat Spreadsheet Baru
+                                </button>
+                            </div>
+
+                            <!-- Existing Spreadsheet -->
+                            <div class="sheets-existing-config" id="sheetsExistingConfig" style="display: none;">
+                                <div class="sheets-input-group">
+                                    <label>🔗 URL Spreadsheet</label>
+                                    <input type="text" id="sheetsUrlInput"
+                                        placeholder="https://docs.google.com/spreadsheets/d/...">
+                                    <button class="fetch-sheets-btn" id="fetchSheetsBtn">🔍 Ambil List Sheets</button>
+                                </div>
+                                <div id="sheetsStatus"></div>
+                                <div class="sheets-input-group" id="sheetSelectGroup" style="display: none;">
+                                    <label>📑 Pilih Sheet</label>
+                                    <select id="sheetSelect">
+                                        <option value="">-- Pilih Sheet --</option>
+                                    </select>
+                                </div>
+                                <div class="sheets-input-group" id="startCellGroup" style="display: none;">
+                                    <label>📍 Mulai dari Cell (data akan overwrite dari cell ini)</label>
+                                    <input type="text" id="sheetsStartCell" value="A1"
+                                        placeholder="Contoh: A1, B5, AA10" style="text-transform: uppercase;">
+                                    <p class="format-hint" style="margin-top: 6px; font-size: 0.75rem; color: #64748B;">
+                                        Format: Column + Row, contoh: <code>A1</code>, <code>B5</code>,
+                                        <code>AA10</code>
+                                    </p>
+                                </div>
+                                <button class="export-sheets-btn" id="exportExistingSheetBtn" style="display: none;">
+                                    📤 Export ke Spreadsheet
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -1246,11 +1696,62 @@
         const columnSearchInput = document.getElementById('columnSearchInput');
         const swapFormatBtn = document.getElementById('swapFormatBtn');
 
+        // DOM Elements - Google Sheets Export
+        const exportModeBtns = document.querySelectorAll('.export-mode-btn[data-mode]');
+        const exportExcelConfig = document.getElementById('exportExcelConfig');
+        const sheetsConfig = document.getElementById('sheetsConfig');
+        const sheetsModeBtns = document.querySelectorAll('.export-mode-btn[data-sheets-mode]');
+        const sheetsNewConfig = document.getElementById('sheetsNewConfig');
+        const sheetsExistingConfig = document.getElementById('sheetsExistingConfig');
+        const sheetsUrlInput = document.getElementById('sheetsUrlInput');
+        const fetchSheetsBtn = document.getElementById('fetchSheetsBtn');
+        const sheetsStatus = document.getElementById('sheetsStatus');
+        const sheetSelectGroup = document.getElementById('sheetSelectGroup');
+        const sheetSelect = document.getElementById('sheetSelect');
+        const startCellGroup = document.getElementById('startCellGroup');
+        const sheetsStartCell = document.getElementById('sheetsStartCell');
+        const exportNewSheetBtn = document.getElementById('exportNewSheetBtn');
+        const exportExistingSheetBtn = document.getElementById('exportExistingSheetBtn');
+
         selectAllBtn.addEventListener('click', () => toggleAllColumns(true));
         deselectAllBtn.addEventListener('click', () => toggleAllColumns(false));
         proceedBtn.addEventListener('click', downloadMergedFile);
         columnSearchInput.addEventListener('input', filterColumns);
         swapFormatBtn.addEventListener('click', swapNumberFormat);
+
+        // Export Mode Toggle (Excel vs Sheets)
+        exportModeBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const mode = btn.dataset.mode;
+                exportModeBtns.forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+                exportExcelConfig.style.display = mode === 'excel' ? 'block' : 'none';
+                sheetsConfig.classList.toggle('active', mode === 'sheets');
+            });
+        });
+
+        // Sheets Mode Toggle (New vs Existing)
+        sheetsModeBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const mode = btn.dataset.sheetsMode;
+                sheetsModeBtns.forEach(b => b.classList.toggle('active', b.dataset.sheetsMode === mode));
+                sheetsNewConfig.style.display = mode === 'new' ? 'block' : 'none';
+                sheetsExistingConfig.style.display = mode === 'existing' ? 'block' : 'none';
+            });
+        });
+
+        // Fetch Sheets Button
+        fetchSheetsBtn.addEventListener('click', fetchSheetNames);
+
+        // Export Buttons
+        exportNewSheetBtn.addEventListener('click', exportToNewSpreadsheet);
+        exportExistingSheetBtn.addEventListener('click', exportToExistingSpreadsheet);
+
+        // Sheet selection change
+        sheetSelect.addEventListener('change', () => {
+            const hasSelection = sheetSelect.value !== '';
+            startCellGroup.style.display = hasSelection ? 'block' : 'none';
+            exportExistingSheetBtn.style.display = hasSelection ? 'flex' : 'none';
+        });
 
         // Row settings event listeners
         headerRowInput.addEventListener('change', handleRowSettingsChange);
@@ -1925,10 +2426,381 @@
             const count = document.querySelectorAll('.column-item input:checked').length;
             selectedCountEl.textContent = count;
             proceedBtn.disabled = count === 0;
-            proceedBtn.textContent = count === 0 ? 'Pilih Kolom Terlebih Dahulu' : `Download ${count} Kolom Terpilih`;
+            proceedBtn.textContent = count === 0 ? 'Pilih Kolom Terlebih Dahulu' : `📥 Download ${count} Kolom Terpilih`;
+
+            // Also update export buttons
+            exportNewSheetBtn.disabled = count === 0;
+            exportExistingSheetBtn.disabled = count === 0;
         }
 
-        console.log('Excel Tools (AHA Commerce) v2.0 initialized');
+        // ============================================
+        // GOOGLE SHEETS EXPORT FUNCTIONS
+        // ============================================
+
+        function getExportData() {
+            const selectedCols = getSelectedColumns();
+            if (selectedCols.length === 0) return null;
+
+            // Build data with selected columns only
+            const data = [];
+
+            // Add header row
+            const headers = allMergedData[headerRowIndex] || [];
+            data.push(selectedCols.map(i => headers[i] || ''));
+
+            // Add data rows
+            for (let i = dataStartRowIndex; i < allMergedData.length; i++) {
+                const row = allMergedData[i];
+                data.push(selectedCols.map(j => row[j] !== undefined ? row[j] : ''));
+            }
+
+            return data;
+        }
+
+        function showSheetsStatus(message, type) {
+            sheetsStatus.innerHTML = `<div class="sheets-status ${type}">${message}</div>`;
+        }
+
+        function fetchSheetNames() {
+            const url = sheetsUrlInput.value.trim();
+            if (!url) {
+                showSheetsStatus('⚠️ Masukkan URL spreadsheet terlebih dahulu', 'error');
+                return;
+            }
+
+            if (!url.includes('docs.google.com/spreadsheets')) {
+                showSheetsStatus('⚠️ URL tidak valid. Gunakan URL Google Spreadsheet', 'error');
+                return;
+            }
+
+            fetchSheetsBtn.disabled = true;
+            fetchSheetsBtn.textContent = '⏳ Mengambil data...';
+            showSheetsStatus('🔄 Mengambil list sheets...', 'loading');
+
+            google.script.run
+                .withSuccessHandler(function (result) {
+                    fetchSheetsBtn.disabled = false;
+                    fetchSheetsBtn.textContent = '🔍 Ambil List Sheets';
+
+                    if (result.success) {
+                        showSheetsStatus(`✅ Spreadsheet: "${result.spreadsheetName}"`, 'success');
+
+                        // Populate dropdown
+                        sheetSelect.innerHTML = '<option value="">-- Pilih Sheet --</option>';
+                        result.sheets.forEach(name => {
+                            const option = document.createElement('option');
+                            option.value = name;
+                            option.textContent = name;
+                            sheetSelect.appendChild(option);
+                        });
+
+                        sheetSelectGroup.style.display = 'block';
+                    } else {
+                        showSheetsStatus('❌ ' + result.error, 'error');
+                        sheetSelectGroup.style.display = 'none';
+                        startCellGroup.style.display = 'none';
+                        exportExistingSheetBtn.style.display = 'none';
+                    }
+                })
+                .withFailureHandler(function (error) {
+                    fetchSheetsBtn.disabled = false;
+                    fetchSheetsBtn.textContent = '🔍 Ambil List Sheets';
+                    showSheetsStatus('❌ Error: ' + error.message, 'error');
+                })
+                .getSpreadsheetSheets(url);
+        }
+
+        function exportToNewSpreadsheet() {
+            const data = getExportData();
+            if (!data) {
+                alert('Pilih minimal 1 kolom untuk di-export');
+                return;
+            }
+
+            const filename = outputFileName.replace('.xlsx', '') + ' - Export';
+
+            exportNewSheetBtn.disabled = true;
+            exportNewSheetBtn.textContent = '⏳ Membuat spreadsheet...';
+            showLoadingOverlay('📊 Membuat Spreadsheet', 'Menghubungkan ke Google Sheets...');
+
+            google.script.run
+                .withSuccessHandler(function (result) {
+                    const dismissed = wasDismissed();
+                    hideLoadingOverlay();
+                    exportNewSheetBtn.disabled = false;
+                    exportNewSheetBtn.textContent = '📊 Buat Spreadsheet Baru';
+
+                    if (result.success) {
+                        if (dismissed) {
+                            // User dismissed, show toast instead of modal
+                            showToast('Spreadsheet Selesai', 'Spreadsheet baru berhasil dibuat!', result.url);
+                        } else {
+                            showSpreadsheetLink(result.url, 'Spreadsheet baru berhasil dibuat!');
+                        }
+                    } else {
+                        if (dismissed) {
+                            showToast('Export Gagal', result.error, null, true);
+                        } else {
+                            alert('❌ Gagal: ' + result.error);
+                        }
+                    }
+                })
+                .withFailureHandler(function (error) {
+                    const dismissed = wasDismissed();
+                    hideLoadingOverlay();
+                    exportNewSheetBtn.disabled = false;
+                    exportNewSheetBtn.textContent = '📊 Buat Spreadsheet Baru';
+                    if (dismissed) {
+                        showToast('Export Error', error.message, null, true);
+                    } else {
+                        alert('❌ Error: ' + error.message);
+                    }
+                })
+                .createNewSpreadsheet(data, filename);
+        }
+
+        function exportToExistingSpreadsheet() {
+            const data = getExportData();
+            if (!data) {
+                alert('Pilih minimal 1 kolom untuk di-export');
+                return;
+            }
+
+            const url = sheetsUrlInput.value.trim();
+            const sheetName = sheetSelect.value;
+            const cellRef = sheetsStartCell.value.trim().toUpperCase() || 'A1';
+
+            // Parse cell reference
+            const parsed = parseCellReference(cellRef);
+            if (!parsed) {
+                alert('Format cell tidak valid. Gunakan format seperti A1, B5, AA10');
+                return;
+            }
+
+            if (!url || !sheetName) {
+                alert('Pilih URL dan Sheet terlebih dahulu');
+                return;
+            }
+
+            exportExistingSheetBtn.disabled = true;
+            exportExistingSheetBtn.textContent = '⏳ Mengexport...';
+            showLoadingOverlay('📤 Export ke Spreadsheet', `Menulis data ke "${sheetName}"...`);
+
+            google.script.run
+                .withSuccessHandler(function (result) {
+                    const dismissed = wasDismissed();
+                    hideLoadingOverlay();
+                    exportExistingSheetBtn.disabled = false;
+                    exportExistingSheetBtn.textContent = '📤 Export ke Spreadsheet';
+
+                    if (result.success) {
+                        if (dismissed) {
+                            showToast('Export Selesai', `${result.rowsWritten} baris ditulis ke "${sheetName}"`, result.url);
+                        } else {
+                            showSpreadsheetLink(result.url, `Export berhasil! ${result.rowsWritten} baris ditulis ke "${sheetName}" mulai dari ${cellRef}.`);
+                        }
+                    } else {
+                        if (dismissed) {
+                            showToast('Export Gagal', result.error, null, true);
+                        } else {
+                            alert('❌ Gagal: ' + result.error);
+                        }
+                    }
+                })
+                .withFailureHandler(function (error) {
+                    const dismissed = wasDismissed();
+                    hideLoadingOverlay();
+                    exportExistingSheetBtn.disabled = false;
+                    exportExistingSheetBtn.textContent = '📤 Export ke Spreadsheet';
+                    if (dismissed) {
+                        showToast('Export Error', error.message, null, true);
+                    } else {
+                        alert('❌ Error: ' + error.message);
+                    }
+                })
+                .exportToExistingSheet(url, sheetName, parsed.row, parsed.col, data);
+        }
+
+        // Parse cell reference like "A1", "B5", "AA10" into {col, row}
+        function parseCellReference(cellRef) {
+            const match = cellRef.match(/^([A-Z]+)(\d+)$/i);
+            if (!match) return null;
+
+            const colLetters = match[1].toUpperCase();
+            const row = parseInt(match[2]);
+
+            if (row < 1) return null;
+
+            // Convert column letters to number (A=1, B=2, ..., Z=26, AA=27, etc.)
+            let col = 0;
+            for (let i = 0; i < colLetters.length; i++) {
+                col = col * 26 + (colLetters.charCodeAt(i) - 64);
+            }
+
+            return { col, row };
+        }
+
+        // Show spreadsheet link modal (avoids popup blocker)
+        function showSpreadsheetLink(url, message) {
+            // Create modal overlay
+            const overlay = document.createElement('div');
+            overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:9999;';
+
+            const modal = document.createElement('div');
+            modal.style.cssText = 'background:white;border-radius:16px;padding:24px;max-width:400px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3);';
+            modal.innerHTML = `
+                <div style="font-size:48px;margin-bottom:12px;">✅</div>
+                <h3 style="margin:0 0 12px 0;color:#1E293B;">${message}</h3>
+                <a href="${url}" target="_blank" style="display:inline-block;background:#0F9D58;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;margin:12px 0;">📊 Buka Spreadsheet</a>
+                <p style="margin:8px 0 0 0;font-size:12px;color:#64748B;">Klik tombol di atas untuk membuka</p>
+                <button id="closeModalBtn" style="margin-top:16px;padding:8px 16px;border:1px solid #E2E8F0;background:white;border-radius:6px;cursor:pointer;">Tutup</button>
+            `;
+
+            overlay.appendChild(modal);
+            document.body.appendChild(overlay);
+
+            // Close handlers
+            document.getElementById('closeModalBtn').onclick = () => overlay.remove();
+            overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+        }
+
+        // ============================================
+        // LOADING OVERLAY FUNCTIONS
+        // ============================================
+        let loadingOverlay = null;
+        let progressInterval = null;
+        let isDismissed = false;
+
+        function showLoadingOverlay(title, status) {
+            // Remove existing if any
+            hideLoadingOverlay(true); // force remove without animation
+            isDismissed = false;
+
+            loadingOverlay = document.createElement('div');
+            loadingOverlay.className = 'loading-overlay';
+            loadingOverlay.innerHTML = `
+                <div class="loading-modal">
+                    <div class="loading-spinner"></div>
+                    <div class="loading-title">${title}</div>
+                    <div class="loading-status" id="loadingStatus">${status}</div>
+                    <div class="loading-progress-bar">
+                        <div class="loading-progress-fill" id="loadingProgressFill" style="width: 0%"></div>
+                    </div>
+                    <div class="loading-percent" id="loadingPercent">0%</div>
+                    <button class="loading-dismiss-btn" id="loadingDismissBtn">Lanjutkan di Background</button>
+                </div>
+            `;
+            document.body.appendChild(loadingOverlay);
+
+            // Dismiss button handler
+            document.getElementById('loadingDismissBtn').onclick = () => {
+                isDismissed = true;
+                hideLoadingOverlay(true);
+            };
+
+            // Start progress simulation
+            let progress = 0;
+            progressInterval = setInterval(() => {
+                // Simulate progress (slow down as it approaches 90%)
+                if (progress < 30) {
+                    progress += Math.random() * 8;
+                } else if (progress < 60) {
+                    progress += Math.random() * 4;
+                } else if (progress < 85) {
+                    progress += Math.random() * 2;
+                } else if (progress < 95) {
+                    progress += Math.random() * 0.5;
+                }
+                progress = Math.min(progress, 95);
+                updateLoadingProgress(Math.round(progress));
+            }, 300);
+        }
+
+        function updateLoadingStatus(status) {
+            const el = document.getElementById('loadingStatus');
+            if (el) el.textContent = status;
+        }
+
+        function updateLoadingProgress(percent) {
+            const fill = document.getElementById('loadingProgressFill');
+            const text = document.getElementById('loadingPercent');
+            if (fill) fill.style.width = percent + '%';
+            if (text) text.textContent = percent + '%';
+        }
+
+        function hideLoadingOverlay(force = false) {
+            if (progressInterval) {
+                clearInterval(progressInterval);
+                progressInterval = null;
+            }
+            if (loadingOverlay) {
+                if (force) {
+                    loadingOverlay.remove();
+                    loadingOverlay = null;
+                } else {
+                    // Complete progress to 100% before hiding
+                    updateLoadingProgress(100);
+                    setTimeout(() => {
+                        if (loadingOverlay) {
+                            loadingOverlay.remove();
+                            loadingOverlay = null;
+                        }
+                    }, 300);
+                }
+            }
+        }
+
+        function wasDismissed() {
+            return isDismissed;
+        }
+
+        // ============================================
+        // TOAST NOTIFICATION FUNCTIONS
+        // ============================================
+        let toastContainer = null;
+
+        function getToastContainer() {
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.className = 'toast-container';
+                document.body.appendChild(toastContainer);
+            }
+            return toastContainer;
+        }
+
+        function showToast(title, message, url = null, isError = false) {
+            const container = getToastContainer();
+
+            const toast = document.createElement('div');
+            toast.className = 'toast' + (isError ? ' error' : '');
+
+            const icon = isError ? '❌' : '✅';
+            const actionHtml = url
+                ? `<a href="${url}" target="_blank" class="toast-action">📊 Buka</a>`
+                : '';
+
+            toast.innerHTML = `
+                <div class="toast-icon">${icon}</div>
+                <div class="toast-content">
+                    <div class="toast-title">${title}</div>
+                    <div class="toast-message">${message}</div>
+                </div>
+                ${actionHtml}
+                <button class="toast-close" onclick="this.parentElement.remove()">×</button>
+            `;
+
+            container.appendChild(toast);
+
+            // Auto remove after 10 seconds
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.style.animation = 'slideOutRight 0.3s ease forwards';
+                    setTimeout(() => toast.remove(), 300);
+                }
+            }, 10000);
+        }
+
+        console.log('Excel Tools (AHA Commerce) v2.5 initialized');
     </script>
 </body>
 
