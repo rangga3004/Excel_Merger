@@ -642,6 +642,43 @@
             display: none;
         }
 
+        .format-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #E2E8F0;
+        }
+
+        .swap-format-btn {
+            flex: 1;
+            padding: 10px 16px;
+            border: 2px solid var(--aha-blue-primary);
+            border-radius: var(--radius-md);
+            background: transparent;
+            color: var(--aha-blue-primary);
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .swap-format-btn:hover {
+            background: var(--aha-blue-primary);
+            color: white;
+        }
+
+        .swap-format-btn.swapped {
+            background: #10B981;
+            border-color: #10B981;
+            color: white;
+        }
+
         .column-grid::-webkit-scrollbar {
             width: 6px;
         }
@@ -839,6 +876,11 @@
                         <span><strong id="selectedCount">0</strong> dari <strong id="totalCount">0</strong> kolom
                             dipilih</span>
                     </div>
+                    <div class="format-actions">
+                        <button type="button" class="swap-format-btn" id="swapFormatBtn">
+                            🔄 Swap Format (. ↔ ,)
+                        </button>
+                    </div>
                     <button class="proceed-btn" id="proceedBtn">Download Kolom Terpilih</button>
                 </div>
             </div>
@@ -926,6 +968,7 @@
         let allMergedData = [];  // Store all data for column filtering
         let headerRow = null;    // Store header row separately
         let currentMode = 'single'; // 'single' or 'merge'
+        let formatSwapped = false; // Track if format has been swapped
 
         // Tab Navigation
         tabBtns.forEach(btn => {
@@ -969,11 +1012,13 @@
         const selectedCountEl = document.getElementById('selectedCount');
         const totalCountEl = document.getElementById('totalCount');
         const columnSearchInput = document.getElementById('columnSearchInput');
+        const swapFormatBtn = document.getElementById('swapFormatBtn');
 
         selectAllBtn.addEventListener('click', () => toggleAllColumns(true));
         deselectAllBtn.addEventListener('click', () => toggleAllColumns(false));
         proceedBtn.addEventListener('click', downloadMergedFile);
         columnSearchInput.addEventListener('input', filterColumns);
+        swapFormatBtn.addEventListener('click', swapNumberFormat);
 
         function handleDragOver(e, zone) {
             e.preventDefault();
@@ -1283,6 +1328,9 @@
             allMergedData = [];
             headerRow = null;
             outputFileName = 'merged_excel.xlsx';
+            formatSwapped = false;
+            swapFormatBtn.classList.remove('swapped');
+            swapFormatBtn.innerHTML = '🔄 Swap Format (. ↔ ,)';
             singleFileInput.value = '';
             zipFileInput.value = '';
             singleUploadZone.classList.remove('hidden');
@@ -1350,6 +1398,29 @@
                 const matches = label.includes(searchTerm);
                 item.classList.toggle('hidden', !matches);
             });
+        }
+
+        function swapNumberFormat() {
+            // Swap . and , in all data cells (skip header row at index 0)
+            for (let i = 1; i < allMergedData.length; i++) {
+                for (let j = 0; j < allMergedData[i].length; j++) {
+                    let cell = allMergedData[i][j];
+                    if (typeof cell === 'string' && /[\d.,]/.test(cell)) {
+                        // Use placeholder to avoid double replacement
+                        cell = cell.replace(/\./g, '###PLACEHOLDER###');
+                        cell = cell.replace(/,/g, '.');
+                        cell = cell.replace(/###PLACEHOLDER###/g, ',');
+                        allMergedData[i][j] = cell;
+                    }
+                }
+            }
+
+            // Toggle button state
+            formatSwapped = !formatSwapped;
+            swapFormatBtn.classList.toggle('swapped', formatSwapped);
+            swapFormatBtn.innerHTML = formatSwapped
+                ? '✓ Format Sudah Di-swap'
+                : '🔄 Swap Format (. ↔ ,)';
         }
 
         function getSelectedColumns() {
