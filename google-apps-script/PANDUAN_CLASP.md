@@ -52,12 +52,26 @@ clasp pull
 clasp open
 ```
 
-### Deploy sebagai Web App
+### Deploy sebagai Web App (URL Baru)
 ```bash
 clasp deploy --description "Versi terbaru"
 ```
+> **Note:** Perintah ini akan membuat **URL BARU**. Gunakan hanya jika Anda ingin membuat instance baru.
 
-### Lihat Daftar Deployment
+#### Update Deployment (URL Tetap)
+**Deployment ID Anda:** `AKfycbxLMEU6JFZPWLEmp7KM5x9zXnbaaYUc1A1rPK_wStoJ3_L1PfFa0NQSNRW1hH_-rce3`
+
+Untuk mempermudah, saya sudah buatkan script. Cukup jalankan:
+```bash
+./deploy.ps1
+```
+atau double click `deploy.bat`
+
+Jika ingin manual:
+```bash
+clasp deploy --deploymentId AKfycbxLMEU6JFZPWLEmp7KM5x9zXnbaaYUc1A1rPK_wStoJ3_L1PfFa0NQSNRW1hH_-rce3 --description "Update fitur baru"
+```
+Dengan cara ini, URL web app Anda **tidak akan berubah**.
 ```bash
 clasp deployments
 ```

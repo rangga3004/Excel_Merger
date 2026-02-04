@@ -624,6 +624,55 @@
             border-radius: 3px;
         }
 
+        /* Tab Navigation */
+        .tab-navigation {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 14px 16px;
+            border: none;
+            border-radius: var(--radius-md);
+            background: rgba(255, 255, 255, 0.15);
+            color: var(--text-light);
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .tab-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .tab-btn.active {
+            background: var(--card-bg);
+            color: var(--aha-blue-primary);
+            box-shadow: var(--card-shadow);
+        }
+
+        .tab-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
         @media (max-width: 480px) {
             .container {
                 border-radius: var(--radius-lg);
@@ -663,26 +712,68 @@
                     <path d="M21 3L38 36H4L21 3Z" fill="white" />
                     <path d="M21 12L30 30H12L21 12Z" fill="#2563EB" />
                 </svg>
-                <h1>Excel Merger</h1>
+                <h1>Excel Tools</h1>
             </div>
-            <p class="subtitle">Gabungkan file Excel multipart dari ZIP menjadi satu file</p>
+            <p class="subtitle">Pilih kolom atau gabungkan file Excel dengan mudah</p>
         </header>
 
         <main class="main">
-            <div class="upload-zone" id="uploadZone">
-                <input type="file" id="fileInput" accept=".zip" hidden>
-                <div class="upload-content">
-                    <div class="upload-icon">
-                        <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M28 38V18M28 18L20 26M28 18L36 26" stroke="currentColor" stroke-width="3"
-                                stroke-linecap="round" stroke-linejoin="round" />
-                            <path d="M10 38V42C10 44.2091 11.7909 46 14 46H42C44.2091 46 46 44.2091 46 42V38"
-                                stroke="currentColor" stroke-width="3" stroke-linecap="round" />
-                        </svg>
+            <!-- Tab Navigation -->
+            <div class="tab-navigation">
+                <button class="tab-btn active" data-tab="columnTab">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path
+                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                    </svg>
+                    Pilih Kolom
+                </button>
+                <button class="tab-btn" data-tab="mergeTab">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />
+                    </svg>
+                    Gabung File
+                </button>
+            </div>
+
+            <!-- Tab: Pilih Kolom (Single File) -->
+            <div class="tab-content active" id="columnTab">
+                <div class="upload-zone" id="singleUploadZone">
+                    <input type="file" id="singleFileInput" accept=".xlsx,.xls" hidden>
+                    <div class="upload-content">
+                        <div class="upload-icon">
+                            <svg width="56" height="56" viewBox="0 0 56 56" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path d="M28 38V18M28 18L20 26M28 18L36 26" stroke="currentColor" stroke-width="3"
+                                    stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M10 38V42C10 44.2091 11.7909 46 14 46H42C44.2091 46 46 44.2091 46 42V38"
+                                    stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+                            </svg>
+                        </div>
+                        <h2>Upload File Excel</h2>
+                        <p>Drag & drop file Excel di sini, atau <span class="browse-link">browse</span></p>
+                        <p class="hint">File Excel (.xlsx) untuk dipilih kolomnya</p>
                     </div>
-                    <h2>Upload File ZIP</h2>
-                    <p>Drag & drop file ZIP di sini, atau <span class="browse-link">browse</span></p>
-                    <p class="hint">File ZIP berisi file Excel (.xlsx) yang akan digabungkan</p>
+                </div>
+            </div>
+
+            <!-- Tab: Gabung File (ZIP) -->
+            <div class="tab-content" id="mergeTab">
+                <div class="upload-zone" id="zipUploadZone">
+                    <input type="file" id="zipFileInput" accept=".zip" hidden>
+                    <div class="upload-content">
+                        <div class="upload-icon">
+                            <svg width="56" height="56" viewBox="0 0 56 56" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path d="M28 38V18M28 18L20 26M28 18L36 26" stroke="currentColor" stroke-width="3"
+                                    stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M10 38V42C10 44.2091 11.7909 46 14 46H42C44.2091 46 46 44.2091 46 42V38"
+                                    stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+                            </svg>
+                        </div>
+                        <h2>Upload File ZIP</h2>
+                        <p>Drag & drop file ZIP di sini, atau <span class="browse-link">browse</span></p>
+                        <p class="hint">File ZIP berisi file Excel (.xlsx) yang akan digabungkan</p>
+                    </div>
                 </div>
             </div>
 
@@ -711,7 +802,8 @@
                     </div>
                     <div class="column-grid" id="columnGrid"></div>
                     <div class="column-count">
-                        <span><strong id="selectedCount">0</strong> dari <strong id="totalCount">0</strong> kolom dipilih</span>
+                        <span><strong id="selectedCount">0</strong> dari <strong id="totalCount">0</strong> kolom
+                            dipilih</span>
                     </div>
                     <button class="proceed-btn" id="proceedBtn">Download Kolom Terpilih</button>
                 </div>
@@ -758,7 +850,7 @@
         </main>
 
         <footer class="footer">
-            <p>Excel Merger v1.0 | <a href="#">AHA Commerce</a> Internal Tool</p>
+            <p>Excel Tools v2.0 | <a href="#">AHA Commerce</a> Internal Tool</p>
         </footer>
     </div>
 
@@ -766,9 +858,20 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <script>
-        // DOM Elements
-        const uploadZone = document.getElementById('uploadZone');
-        const fileInput = document.getElementById('fileInput');
+        // DOM Elements - Tabs
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        let currentTab = 'columnTab';
+
+        // DOM Elements - Single File Tab
+        const singleUploadZone = document.getElementById('singleUploadZone');
+        const singleFileInput = document.getElementById('singleFileInput');
+
+        // DOM Elements - ZIP Merge Tab
+        const zipUploadZone = document.getElementById('zipUploadZone');
+        const zipFileInput = document.getElementById('zipFileInput');
+
+        // DOM Elements - Shared
         const progressSection = document.getElementById('progressSection');
         const progressTitle = document.getElementById('progressTitle');
         const progressPercent = document.getElementById('progressPercent');
@@ -788,13 +891,37 @@
         let outputFileName = 'merged_excel.xlsx';
         let allMergedData = [];  // Store all data for column filtering
         let headerRow = null;    // Store header row separately
+        let currentMode = 'single'; // 'single' or 'merge'
 
-        // Event Listeners
-        uploadZone.addEventListener('click', () => fileInput.click());
-        uploadZone.addEventListener('dragover', handleDragOver);
-        uploadZone.addEventListener('dragleave', handleDragLeave);
-        uploadZone.addEventListener('drop', handleDrop);
-        fileInput.addEventListener('change', handleFileSelect);
+        // Tab Navigation
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                switchTab(btn.dataset.tab);
+            });
+        });
+
+        function switchTab(tabId) {
+            currentTab = tabId;
+            tabBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tabId));
+            tabContents.forEach(content => content.classList.toggle('active', content.id === tabId));
+            resetApp(); // Reset state when switching tabs
+        }
+
+        // Event Listeners - Single File Tab
+        singleUploadZone.addEventListener('click', () => singleFileInput.click());
+        singleUploadZone.addEventListener('dragover', (e) => handleDragOver(e, singleUploadZone));
+        singleUploadZone.addEventListener('dragleave', (e) => handleDragLeave(e, singleUploadZone));
+        singleUploadZone.addEventListener('drop', (e) => handleSingleDrop(e));
+        singleFileInput.addEventListener('change', handleSingleFileSelect);
+
+        // Event Listeners - ZIP Merge Tab
+        zipUploadZone.addEventListener('click', () => zipFileInput.click());
+        zipUploadZone.addEventListener('dragover', (e) => handleDragOver(e, zipUploadZone));
+        zipUploadZone.addEventListener('dragleave', (e) => handleDragLeave(e, zipUploadZone));
+        zipUploadZone.addEventListener('drop', (e) => handleZipDrop(e));
+        zipFileInput.addEventListener('change', handleZipFileSelect);
+
+        // Shared Event Listeners
         downloadBtn.addEventListener('click', downloadMergedFile);
         resetBtn.addEventListener('click', resetApp);
         errorResetBtn.addEventListener('click', resetApp);
@@ -812,39 +939,100 @@
         deselectAllBtn.addEventListener('click', () => toggleAllColumns(false));
         proceedBtn.addEventListener('click', downloadMergedFile);
 
-        function handleDragOver(e) {
+        function handleDragOver(e, zone) {
             e.preventDefault();
             e.stopPropagation();
-            uploadZone.classList.add('drag-over');
+            zone.classList.add('drag-over');
         }
 
-        function handleDragLeave(e) {
+        function handleDragLeave(e, zone) {
             e.preventDefault();
             e.stopPropagation();
-            uploadZone.classList.remove('drag-over');
+            zone.classList.remove('drag-over');
         }
 
-        function handleDrop(e) {
+        // Single File Handlers
+        function handleSingleDrop(e) {
             e.preventDefault();
             e.stopPropagation();
-            uploadZone.classList.remove('drag-over');
+            singleUploadZone.classList.remove('drag-over');
             const files = e.dataTransfer.files;
-            if (files.length > 0) processFile(files[0]);
+            if (files.length > 0) processSingleFile(files[0]);
         }
 
-        function handleFileSelect(e) {
+        function handleSingleFileSelect(e) {
             const files = e.target.files;
-            if (files.length > 0) processFile(files[0]);
+            if (files.length > 0) processSingleFile(files[0]);
         }
 
-        async function processFile(file) {
+        // ZIP File Handlers
+        function handleZipDrop(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            zipUploadZone.classList.remove('drag-over');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) processZipFile(files[0]);
+        }
+
+        function handleZipFileSelect(e) {
+            const files = e.target.files;
+            if (files.length > 0) processZipFile(files[0]);
+        }
+
+        // Process Single Excel File
+        async function processSingleFile(file) {
+            const fileName = file.name.toLowerCase();
+            if (!fileName.endsWith('.xlsx') && !fileName.endsWith('.xls')) {
+                showError('File harus berformat .xlsx atau .xls');
+                return;
+            }
+
+            currentMode = 'single';
+            outputFileName = file.name.replace(/\.(xlsx|xls)$/i, '_filtered.xlsx');
+            singleUploadZone.classList.add('hidden');
+            showProgress();
+
+            try {
+                updateProgress(20, 'Membaca file Excel...');
+                const excelData = await readFileAsArrayBuffer(file);
+
+                updateProgress(50, 'Memproses data...');
+                const workbook = XLSX.read(excelData, { type: 'array' });
+                const sheetName = workbook.SheetNames[0];
+                const sheet = workbook.Sheets[sheetName];
+                const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' });
+
+                if (jsonData.length === 0) {
+                    throw new Error('File Excel kosong');
+                }
+
+                // Store data globally
+                allMergedData = jsonData;
+                headerRow = jsonData[0];
+
+                updateProgress(100, 'Selesai!');
+
+                setTimeout(() => {
+                    showColumnSelector(headerRow, 1, jsonData.length - 1);
+                }, 500);
+
+            } catch (error) {
+                console.error('Error processing file:', error);
+                showError(error.message || 'Terjadi kesalahan saat memproses file');
+            }
+        }
+
+        // Process ZIP File (Merge)
+        async function processZipFile(file) {
             if (!file.name.toLowerCase().endsWith('.zip')) {
                 showError('File harus berformat .zip');
                 return;
             }
 
+            currentMode = 'merge';
+
             outputFileName = file.name.replace('.zip', '_merged.xlsx');
-            uploadZone.classList.add('hidden');
+            zipUploadZone.classList.add('hidden');
             showProgress();
 
             try {
@@ -1016,7 +1204,8 @@
         }
 
         function showError(message) {
-            uploadZone.classList.add('hidden');
+            singleUploadZone.classList.add('hidden');
+            zipUploadZone.classList.add('hidden');
             progressSection.classList.remove('active');
             resultSection.classList.remove('active');
             fileListSection.classList.remove('active');
@@ -1033,7 +1222,7 @@
 
             try {
                 // Filter data by selected columns
-                const filteredData = allMergedData.map(row => 
+                const filteredData = allMergedData.map(row =>
                     selectedColumns.map(colIndex => row[colIndex] !== undefined ? row[colIndex] : '')
                 );
 
@@ -1058,8 +1247,10 @@
             allMergedData = [];
             headerRow = null;
             outputFileName = 'merged_excel.xlsx';
-            fileInput.value = '';
-            uploadZone.classList.remove('hidden');
+            singleFileInput.value = '';
+            zipFileInput.value = '';
+            singleUploadZone.classList.remove('hidden');
+            zipUploadZone.classList.remove('hidden');
             progressSection.classList.remove('active');
             fileListSection.classList.remove('active');
             columnSelectorSection.classList.remove('active');
@@ -1131,7 +1322,7 @@
             proceedBtn.textContent = count === 0 ? 'Pilih Kolom Terlebih Dahulu' : `Download ${count} Kolom Terpilih`;
         }
 
-        console.log('Excel Merger (AHA Commerce) initialized');
+        console.log('Excel Tools (AHA Commerce) v2.0 initialized');
     </script>
 </body>
 
