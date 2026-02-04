@@ -736,7 +736,8 @@
             border-collapse: collapse;
         }
 
-        .preview-table th, .preview-table td {
+        .preview-table th,
+        .preview-table td {
             padding: 6px 8px;
             text-align: left;
             border-bottom: 1px solid #E2E8F0;
@@ -955,9 +956,9 @@
                             🔄 Swap Format (. ↔ ,)
                         </button>
                     </div>
-                                        <div class="format-preview" id="formatPreview">
+                    <div class="format-preview" id="formatPreview">
                         <div class="format-preview-title">
-                             Preview Data <span class="format-badge" id="formatBadge"></span>
+                            Preview Data <span class="format-badge" id="formatBadge"></span>
                         </div>
                         <table class="preview-table">
                             <thead id="previewHeader"></thead>
@@ -1462,6 +1463,7 @@
                     }
                     item.classList.toggle('selected', item.querySelector('input').checked);
                     updateColumnCount();
+                    updatePreview();
                 });
             });
 
@@ -1484,14 +1486,15 @@
                 item.classList.toggle('selected', selectAll);
             });
             updateColumnCount();
+            updatePreview();
         }
 
-        
+
         // Auto-detect number format from data
         function detectNumberFormat() {
             let idFormatCount = 0;  // 1.234,56
             let usFormatCount = 0;  // 1,234.56
-            
+
             // Sample first 100 data rows (skip header)
             const sampleSize = Math.min(100, allMergedData.length - 1);
             for (let i = 1; i <= sampleSize; i++) {
@@ -1503,37 +1506,47 @@
                     if (/\d{1,3}(,\d{3})+\.\d+/.test(cell)) usFormatCount++;
                 }
             }
-            
+
             if (idFormatCount > usFormatCount) return 'ID';
             if (usFormatCount > idFormatCount) return 'US';
             return null; // Unknown
         }
 
-        // Update preview table with sample data
+        // Update preview table with sample data (filtered by selected columns)
         function updatePreview() {
             if (allMergedData.length < 2) return;
-            
+
             // Detect format
             const detectedFormat = detectNumberFormat();
-            formatBadge.textContent = detectedFormat ? 
-                (detectedFormat === 'ID' ? 'ID Format (1.234,56)' : 'US Format (1,234.56)') : 
+            formatBadge.textContent = detectedFormat ?
+                (detectedFormat === 'ID' ? 'ID Format (1.234,56)' : 'US Format (1,234.56)') :
                 'Format tidak dikenali';
-            formatBadge.className = 'format-badge ' + 
+            formatBadge.className = 'format-badge ' +
                 (detectedFormat === 'ID' ? 'id-format' : detectedFormat === 'US' ? 'us-format' : '');
-            
-            // Get all columns and 2 rows for preview
-            const headers = allMergedData[0];
-            const previewRows = allMergedData.slice(1, 3);
-            
+
+            // Get selected column indices
+            const selectedIndices = getSelectedColumns();
+            if (selectedIndices.length === 0) {
+                previewHeader.innerHTML = '<tr><th>Tidak ada kolom dipilih</th></tr>';
+                previewBody.innerHTML = '';
+                return;
+            }
+
+            // Filter headers and rows by selected columns
+            const headers = selectedIndices.map(i => allMergedData[0][i]);
+            const previewRows = allMergedData.slice(1, 3).map(row =>
+                selectedIndices.map(i => row[i])
+            );
+
             // Render header
-            previewHeader.innerHTML = '<tr>' + headers.map(h => 
-                '<th title=\"' + (h || '') + '\">' + (h || '-') + '</th>'
+            previewHeader.innerHTML = '<tr>' + headers.map(h =>
+                '<th title="' + (h || '') + '">' + (h || '-') + '</th>'
             ).join('') + '</tr>';
-            
+
             // Render body
-            previewBody.innerHTML = previewRows.map(row => 
-                '<tr>' + row.map(cell => 
-                    '<td title=\"' + (cell || '') + '\">' + (cell || '-') + '</td>'
+            previewBody.innerHTML = previewRows.map(row =>
+                '<tr>' + row.map(cell =>
+                    '<td title="' + (cell || '') + '">' + (cell || '-') + '</td>'
                 ).join('') + '</tr>'
             ).join('');
         }
