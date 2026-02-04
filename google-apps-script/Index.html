@@ -1472,15 +1472,6 @@
 
             // Update preview with sample data and detected format
             updatePreview();
-
-            // Auto-apply session format preference
-                swapNumberFormat();
-            }
-            // Sync button state with current formatSwapped
-            swapFormatBtn.classList.toggle('swapped', formatSwapped);
-            swapFormatBtn.innerHTML = formatSwapped
-                ? '✓ Format Sudah Di-swap'
-                : '🔄 Swap Format (. ↔ ,)';
         }
 
         function toggleAllColumns(selectAll) {
