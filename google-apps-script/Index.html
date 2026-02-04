@@ -1457,7 +1457,9 @@
             // Add click handlers
             document.querySelectorAll('.column-item').forEach(item => {
                 item.addEventListener('click', (e) => {
-                    if (e.target.tagName !== 'INPUT') {
+                    // Only manually toggle if clicking outside checkbox and label
+                    // (label already toggles checkbox natively via 'for' attribute)
+                    if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'LABEL') {
                         const checkbox = item.querySelector('input[type="checkbox"]');
                         checkbox.checked = !checkbox.checked;
                     }
