@@ -856,6 +856,42 @@
             animation: fadeIn 0.3s ease;
         }
 
+        /* Upload Type Selector (ZIP vs Excel) */
+        .upload-type-selector {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .upload-type-btn {
+            flex: 1;
+            padding: 10px 12px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: var(--radius-md);
+            background: transparent;
+            color: var(--text-light);
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .upload-type-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .upload-type-btn.active {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+            color: var(--text-white);
+        }
+
         @media (max-width: 480px) {
             .container {
                 border-radius: var(--radius-lg);
@@ -939,8 +975,19 @@
                 </div>
             </div>
 
-            <!-- Tab: Gabung File (ZIP) -->
+            <!-- Tab: Gabung File (ZIP / Multiple Excel) -->
             <div class="tab-content" id="mergeTab">
+                <!-- Upload Type Selector -->
+                <div class="upload-type-selector">
+                    <button class="upload-type-btn active" data-type="zip">
+                        📦 Upload ZIP
+                    </button>
+                    <button class="upload-type-btn" data-type="excel">
+                        📄 Upload Excel Files
+                    </button>
+                </div>
+
+                <!-- ZIP Upload Zone -->
                 <div class="upload-zone" id="zipUploadZone">
                     <input type="file" id="zipFileInput" accept=".zip" hidden>
                     <div class="upload-content">
@@ -956,6 +1003,25 @@
                         <h2>Upload File ZIP</h2>
                         <p>Drag & drop file ZIP di sini, atau <span class="browse-link">browse</span></p>
                         <p class="hint">File ZIP berisi file Excel (.xlsx) yang akan digabungkan</p>
+                    </div>
+                </div>
+
+                <!-- Multiple Excel Upload Zone -->
+                <div class="upload-zone hidden" id="excelUploadZone">
+                    <input type="file" id="excelFilesInput" accept=".xlsx,.xls" multiple hidden>
+                    <div class="upload-content">
+                        <div class="upload-icon">
+                            <svg width="56" height="56" viewBox="0 0 56 56" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path d="M28 38V18M28 18L20 26M28 18L36 26" stroke="currentColor" stroke-width="3"
+                                    stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M10 38V42C10 44.2091 11.7909 46 14 46H42C44.2091 46 46 44.2091 46 42V38"
+                                    stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+                            </svg>
+                        </div>
+                        <h2>Upload File Excel</h2>
+                        <p>Drag & drop file Excel di sini, atau <span class="browse-link">browse</span></p>
+                        <p class="hint">Pilih beberapa file Excel (.xlsx) untuk digabungkan</p>
                     </div>
                 </div>
             </div>
@@ -1079,6 +1145,11 @@
         const zipUploadZone = document.getElementById('zipUploadZone');
         const zipFileInput = document.getElementById('zipFileInput');
 
+        // DOM Elements - Multiple Excel Upload
+        const uploadTypeBtns = document.querySelectorAll('.upload-type-btn');
+        const excelUploadZone = document.getElementById('excelUploadZone');
+        const excelFilesInput = document.getElementById('excelFilesInput');
+
         // DOM Elements - Shared
         const progressSection = document.getElementById('progressSection');
         const progressTitle = document.getElementById('progressTitle');
@@ -1140,6 +1211,24 @@
         zipUploadZone.addEventListener('dragleave', (e) => handleDragLeave(e, zipUploadZone));
         zipUploadZone.addEventListener('drop', (e) => handleZipDrop(e));
         zipFileInput.addEventListener('change', handleZipFileSelect);
+
+        // Event Listeners - Upload Type Toggle
+        uploadTypeBtns.forEach(btn => {
+            btn.addEventListener('click', () => switchUploadType(btn.dataset.type));
+        });
+
+        function switchUploadType(type) {
+            uploadTypeBtns.forEach(b => b.classList.toggle('active', b.dataset.type === type));
+            zipUploadZone.classList.toggle('hidden', type !== 'zip');
+            excelUploadZone.classList.toggle('hidden', type !== 'excel');
+        }
+
+        // Event Listeners - Multiple Excel Upload
+        excelUploadZone.addEventListener('click', () => excelFilesInput.click());
+        excelUploadZone.addEventListener('dragover', (e) => handleDragOver(e, excelUploadZone));
+        excelUploadZone.addEventListener('dragleave', (e) => handleDragLeave(e, excelUploadZone));
+        excelUploadZone.addEventListener('drop', (e) => handleMultipleExcelDrop(e));
+        excelFilesInput.addEventListener('change', handleMultipleExcelSelect);
 
         // Shared Event Listeners
         downloadBtn.addEventListener('click', downloadMergedFile);
@@ -1254,6 +1343,103 @@
         function handleZipFileSelect(e) {
             const files = e.target.files;
             if (files.length > 0) processZipFile(files[0]);
+        }
+
+        // Multiple Excel File Handlers
+        function handleMultipleExcelDrop(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            excelUploadZone.classList.remove('drag-over');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) processMultipleExcelFiles(files);
+        }
+
+        function handleMultipleExcelSelect(e) {
+            const files = e.target.files;
+            if (files.length > 0) processMultipleExcelFiles(files);
+        }
+
+        // Process Multiple Excel Files (Merge)
+        async function processMultipleExcelFiles(fileList) {
+            // Filter only Excel files
+            const files = Array.from(fileList).filter(f => {
+                const name = f.name.toLowerCase();
+                return name.endsWith('.xlsx') || name.endsWith('.xls');
+            });
+
+            if (files.length === 0) {
+                showError('Tidak ditemukan file Excel (.xlsx atau .xls)');
+                return;
+            }
+
+            if (files.length < 2) {
+                showError('Pilih minimal 2 file Excel untuk digabungkan');
+                return;
+            }
+
+            currentMode = 'merge';
+            outputFileName = 'merged_excel.xlsx';
+            excelUploadZone.classList.add('hidden');
+            showProgress();
+
+            try {
+                updateProgress(10, 'Mempersiapkan file...');
+
+                // Sort files by name (natural sort)
+                files.sort((a, b) => naturalSort(a.name, b.name));
+
+                updateProgress(20, `Memproses ${files.length} file Excel...`);
+
+                const allData = [];
+                let currentHeaderRow = null;
+                let totalRows = 0;
+                const fileStats = [];
+
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    const progressPct = 20 + Math.round((i / files.length) * 60);
+                    updateProgress(progressPct, `Memproses: ${file.name}`);
+
+                    const excelData = await readFileAsArrayBuffer(file);
+                    const workbook = XLSX.read(excelData, { type: 'array' });
+                    const sheetName = workbook.SheetNames[0];
+                    const sheet = workbook.Sheets[sheetName];
+                    const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' });
+
+                    if (jsonData.length === 0) continue;
+
+                    let dataRows;
+                    if (currentHeaderRow === null) {
+                        currentHeaderRow = jsonData[0];
+                        dataRows = jsonData;
+                    } else {
+                        dataRows = jsonData.slice(1);
+                    }
+
+                    const rowCount = dataRows.length - (currentHeaderRow === jsonData[0] ? 1 : 0);
+                    fileStats.push({ name: file.name, rows: rowCount });
+                    totalRows += rowCount;
+                    allData.push(...dataRows);
+                }
+
+                displayFileList(fileStats);
+
+                updateProgress(85, 'Menyiapkan pemilihan kolom...');
+
+                // Store data globally for column filtering
+                allMergedData = allData;
+                headerRow = currentHeaderRow;
+
+                updateProgress(100, 'Selesai!');
+
+                setTimeout(() => {
+                    showColumnSelector(currentHeaderRow, files.length, totalRows);
+                }, 500);
+
+            } catch (error) {
+                console.error('Error processing files:', error);
+                showError(error.message || 'Terjadi kesalahan saat memproses file');
+            }
         }
 
         // Process Single Excel File
@@ -1483,6 +1669,7 @@
         function showError(message) {
             singleUploadZone.classList.add('hidden');
             zipUploadZone.classList.add('hidden');
+            excelUploadZone.classList.add('hidden');
             progressSection.classList.remove('active');
             resultSection.classList.remove('active');
             fileListSection.classList.remove('active');
@@ -1539,8 +1726,17 @@
             swapFormatBtn.innerHTML = '🔄 Swap Format (. ↔ ,)';
             singleFileInput.value = '';
             zipFileInput.value = '';
+            excelFilesInput.value = '';
             singleUploadZone.classList.remove('hidden');
-            zipUploadZone.classList.remove('hidden');
+            // Restore ZIP/Excel upload zones based on current toggle state
+            const activeUploadType = document.querySelector('.upload-type-btn.active');
+            if (activeUploadType && activeUploadType.dataset.type === 'excel') {
+                zipUploadZone.classList.add('hidden');
+                excelUploadZone.classList.remove('hidden');
+            } else {
+                zipUploadZone.classList.remove('hidden');
+                excelUploadZone.classList.add('hidden');
+            }
             progressSection.classList.remove('active');
             fileListSection.classList.remove('active');
             columnSelectorSection.classList.remove('active');
