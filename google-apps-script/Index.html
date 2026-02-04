@@ -1521,9 +1521,9 @@
             formatBadge.className = 'format-badge ' + 
                 (detectedFormat === 'ID' ? 'id-format' : detectedFormat === 'US' ? 'us-format' : '');
             
-            // Get first 5 columns and 2 rows for preview
-            const headers = allMergedData[0].slice(0, 5);
-            const previewRows = allMergedData.slice(1, 3).map(row => row.slice(0, 5));
+            // Get all columns and 2 rows for preview
+            const headers = allMergedData[0];
+            const previewRows = allMergedData.slice(1, 3);
             
             // Render header
             previewHeader.innerHTML = '<tr>' + headers.map(h => 
