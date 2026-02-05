@@ -1277,6 +1277,150 @@
             }
         }
 
+        /* Process History Tab Styles */
+        .history-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            min-height: 200px;
+        }
+
+        .history-empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: #64748B;
+        }
+
+        .history-empty-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+            opacity: 0.7;
+        }
+
+        .history-item {
+            background: white;
+            border: 1px solid #E2E8F0;
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .history-item:hover {
+            border-color: #CBD5E1;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .history-item.processing {
+            border-left: 4px solid var(--aha-blue-primary);
+        }
+
+        .history-item.success {
+            border-left: 4px solid #0F9D58;
+        }
+
+        .history-item.error {
+            border-left: 4px solid #DC2626;
+        }
+
+        .history-icon {
+            font-size: 28px;
+            flex-shrink: 0;
+        }
+
+        .history-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .history-filename {
+            font-weight: 600;
+            color: #1E293B;
+            font-size: 0.95rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .history-meta {
+            font-size: 0.8rem;
+            color: #64748B;
+            margin-top: 4px;
+        }
+
+        .history-progress {
+            width: 100%;
+            height: 6px;
+            background: #E2E8F0;
+            border-radius: 3px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+
+        .history-progress-fill {
+            height: 100%;
+            background: var(--aha-blue-primary);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .history-actions {
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .history-btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+        }
+
+        .history-btn-primary {
+            background: #0F9D58;
+            color: white;
+        }
+
+        .history-btn-primary:hover {
+            background: #0B8043;
+        }
+
+        .history-btn-secondary {
+            background: #F1F5F9;
+            color: #475569;
+            border: 1px solid #E2E8F0;
+        }
+
+        .history-btn-secondary:hover {
+            background: #E2E8F0;
+        }
+
+        .history-clear-btn {
+            background: none;
+            border: 1px solid #E2E8F0;
+            color: #94A3B8;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-bottom: 12px;
+        }
+
+        .history-clear-btn:hover {
+            background: #FEE2E2;
+            border-color: #FECACA;
+            color: #DC2626;
+        }
+
         @media (max-width: 480px) {
             .container {
                 border-radius: var(--radius-lg);
@@ -1336,6 +1480,12 @@
                         <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />
                     </svg>
                     Gabung File
+                </button>
+                <button class="tab-btn" data-tab="historyTab">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Riwayat
                 </button>
             </div>
 
@@ -1407,6 +1557,24 @@
                         <h2>Upload File Excel</h2>
                         <p>Drag & drop file Excel di sini, atau <span class="browse-link">browse</span></p>
                         <p class="hint">Pilih beberapa file Excel (.xlsx) untuk digabungkan</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Riwayat Export -->
+            <div class="tab-content" id="historyTab">
+                <div class="history-container" id="historyContainer">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; padding-bottom: 12px; border-bottom: 1px solid #E2E8F0;">
+                        <h3 style="margin: 0; color: #1E293B; font-size: 1rem;">📜 Riwayat Export</h3>
+                        <button class="history-clear-btn" id="clearHistoryBtn" style="display: none; margin: 0;">🗑️
+                            Hapus Semua</button>
+                    </div>
+                    <div class="history-empty" id="historyEmpty">
+                        <div class="history-empty-icon">📋</div>
+                        <p style="color: #475569; font-weight: 500;">Belum ada riwayat export</p>
+                        <p style="font-size: 0.8rem; color: #94A3B8;">Export ke Google Sheets untuk melihat riwayat di
+                            sini</p>
                     </div>
                 </div>
             </div>
@@ -2519,9 +2687,12 @@
 
             const filename = outputFileName.replace('.xlsx', '') + ' - Export';
 
+            // Add to history
+            const historyId = addToHistory(filename, 'new');
+
             exportNewSheetBtn.disabled = true;
             exportNewSheetBtn.textContent = '⏳ Membuat spreadsheet...';
-            showLoadingOverlay('📊 Membuat Spreadsheet', 'Menghubungkan ke Google Sheets...');
+            showLoadingOverlay('📊 Membuat Spreadsheet', 'Menghubungkan ke Google Sheets...', historyId);
 
             google.script.run
                 .withSuccessHandler(function (result) {
@@ -2531,6 +2702,7 @@
                     exportNewSheetBtn.textContent = '📊 Buat Spreadsheet Baru';
 
                     if (result.success) {
+                        updateHistoryItem(historyId, { status: 'success', url: result.url });
                         if (dismissed) {
                             // User dismissed, show toast instead of modal
                             showToast('Spreadsheet Selesai', 'Spreadsheet baru berhasil dibuat!', result.url);
@@ -2538,6 +2710,7 @@
                             showSpreadsheetLink(result.url, 'Spreadsheet baru berhasil dibuat!');
                         }
                     } else {
+                        updateHistoryItem(historyId, { status: 'error', error: result.error });
                         if (dismissed) {
                             showToast('Export Gagal', result.error, null, true);
                         } else {
@@ -2550,6 +2723,7 @@
                     hideLoadingOverlay();
                     exportNewSheetBtn.disabled = false;
                     exportNewSheetBtn.textContent = '📊 Buat Spreadsheet Baru';
+                    updateHistoryItem(historyId, { status: 'error', error: error.message });
                     if (dismissed) {
                         showToast('Export Error', error.message, null, true);
                     } else {
@@ -2582,9 +2756,13 @@
                 return;
             }
 
+            // Add to history
+            const filename = outputFileName.replace('.xlsx', '') + ' - Export';
+            const historyId = addToHistory(filename, 'existing', sheetName, cellRef);
+
             exportExistingSheetBtn.disabled = true;
             exportExistingSheetBtn.textContent = '⏳ Mengexport...';
-            showLoadingOverlay('📤 Export ke Spreadsheet', `Menulis data ke "${sheetName}"...`);
+            showLoadingOverlay('📤 Export ke Spreadsheet', `Menulis data ke "${sheetName}"...`, historyId);
 
             google.script.run
                 .withSuccessHandler(function (result) {
@@ -2594,12 +2772,14 @@
                     exportExistingSheetBtn.textContent = '📤 Export ke Spreadsheet';
 
                     if (result.success) {
+                        updateHistoryItem(historyId, { status: 'success', url: result.url });
                         if (dismissed) {
                             showToast('Export Selesai', `${result.rowsWritten} baris ditulis ke "${sheetName}"`, result.url);
                         } else {
                             showSpreadsheetLink(result.url, `Export berhasil! ${result.rowsWritten} baris ditulis ke "${sheetName}" mulai dari ${cellRef}.`);
                         }
                     } else {
+                        updateHistoryItem(historyId, { status: 'error', error: result.error });
                         if (dismissed) {
                             showToast('Export Gagal', result.error, null, true);
                         } else {
@@ -2612,6 +2792,7 @@
                     hideLoadingOverlay();
                     exportExistingSheetBtn.disabled = false;
                     exportExistingSheetBtn.textContent = '📤 Export ke Spreadsheet';
+                    updateHistoryItem(historyId, { status: 'error', error: error.message });
                     if (dismissed) {
                         showToast('Export Error', error.message, null, true);
                     } else {
@@ -2670,11 +2851,15 @@
         let loadingOverlay = null;
         let progressInterval = null;
         let isDismissed = false;
+        let currentHistoryId = null;
+        let currentProgress = 0;
 
-        function showLoadingOverlay(title, status) {
+        function showLoadingOverlay(title, status, historyId = null) {
             // Remove existing if any
             hideLoadingOverlay(true); // force remove without animation
             isDismissed = false;
+            currentHistoryId = historyId;
+            currentProgress = 0;
 
             loadingOverlay = document.createElement('div');
             loadingOverlay.className = 'loading-overlay';
@@ -2692,10 +2877,10 @@
             `;
             document.body.appendChild(loadingOverlay);
 
-            // Dismiss button handler
+            // Dismiss button handler - keep progress running in background
             document.getElementById('loadingDismissBtn').onclick = () => {
                 isDismissed = true;
-                hideLoadingOverlay(true);
+                hideLoadingOverlay(true, true); // force=true, keepProgress=true
             };
 
             // Start progress simulation
@@ -2712,7 +2897,13 @@
                     progress += Math.random() * 0.5;
                 }
                 progress = Math.min(progress, 95);
-                updateLoadingProgress(Math.round(progress));
+                currentProgress = Math.round(progress);
+                updateLoadingProgress(currentProgress);
+
+                // Sync to history
+                if (currentHistoryId) {
+                    updateHistoryItemProgress(currentHistoryId, currentProgress);
+                }
             }, 300);
         }
 
@@ -2728,8 +2919,44 @@
             if (text) text.textContent = percent + '%';
         }
 
-        function hideLoadingOverlay(force = false) {
-            if (progressInterval) {
+        // Show progress modal for a specific history item (when clicking on processing item)
+        function showProgressModal(historyId) {
+            const item = processHistory.find(h => h.id === historyId);
+            if (!item || item.status !== 'processing') return;
+
+            // Create info modal
+            const overlay = document.createElement('div');
+            overlay.className = 'custom-modal-overlay';
+            overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:10000;';
+
+            const elapsed = Math.round((Date.now() - item.startTime) / 1000);
+            const elapsedText = elapsed < 60 ? `${elapsed} detik` : `${Math.floor(elapsed / 60)}m ${elapsed % 60}s`;
+
+            const modal = document.createElement('div');
+            modal.style.cssText = 'background:white;border-radius:16px;padding:24px;max-width:400px;width:90%;text-align:center;';
+            modal.innerHTML = `
+                <div style="font-size:48px;margin-bottom:12px;">🔄</div>
+                <h3 style="margin:0 0 8px;color:#1E293B;font-size:1.1rem;">Sedang Diproses</h3>
+                <p style="color:#64748B;font-size:0.85rem;margin:0 0 16px;word-break:break-word;">${item.filename}</p>
+                <div style="background:#E2E8F0;border-radius:8px;height:8px;overflow:hidden;margin-bottom:8px;">
+                    <div style="background:linear-gradient(90deg,#2563EB,#4F46E5);height:100%;width:${item.progress || 0}%;transition:width 0.3s;"></div>
+                </div>
+                <p style="color:#64748B;font-size:0.8rem;margin:0 0 16px;">${item.progress || 0}% • Elapsed: ${elapsedText}</p>
+                <p style="color:#94A3B8;font-size:0.75rem;margin:0 0 16px;">Proses berjalan di background. Halaman akan diupdate otomatis saat selesai.</p>
+                <button id="closeProgressModalBtn" style="background:#2563EB;color:white;border:none;padding:10px 24px;border-radius:8px;cursor:pointer;font-weight:500;">OK, Tutup</button>
+            `;
+
+            overlay.appendChild(modal);
+            document.body.appendChild(overlay);
+
+            // Close handlers
+            document.getElementById('closeProgressModalBtn').onclick = () => overlay.remove();
+            overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+        }
+
+        function hideLoadingOverlay(force = false, keepProgress = false) {
+            // Only clear interval if NOT keeping progress (i.e. process completed, not dismissed)
+            if (progressInterval && !keepProgress) {
                 clearInterval(progressInterval);
                 progressInterval = null;
             }
@@ -2799,8 +3026,203 @@
                 }
             }, 10000);
         }
+        // ============================================
+        // PROCESS HISTORY FUNCTIONS
+        // ============================================
+        const HISTORY_STORAGE_KEY = 'excel_tools_export_history';
+        let processHistory = [];
 
-        console.log('Excel Tools (AHA Commerce) v2.5 initialized');
+        function loadHistoryFromStorage() {
+            try {
+                const stored = localStorage.getItem(HISTORY_STORAGE_KEY);
+                if (stored) {
+                    processHistory = JSON.parse(stored);
+                    // Clean up old processing items (they didn't complete)
+                    processHistory = processHistory.filter(item => item.status !== 'processing');
+                }
+            } catch (e) {
+                console.warn('Failed to load history from storage:', e);
+                processHistory = [];
+            }
+            renderHistory();
+        }
+
+        function saveHistoryToStorage() {
+            try {
+                localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(processHistory));
+            } catch (e) {
+                console.warn('Failed to save history to storage:', e);
+            }
+        }
+
+        function generateHistoryId() {
+            return 'h_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        }
+
+        function addToHistory(filename, type, sheetName = null, cellRef = null) {
+            const item = {
+                id: generateHistoryId(),
+                filename: filename,
+                type: type, // 'new' or 'existing'
+                sheetName: sheetName,
+                cellRef: cellRef,
+                status: 'processing',
+                progress: 0,
+                url: null,
+                error: null,
+                startTime: Date.now(),
+                endTime: null
+            };
+            processHistory.unshift(item); // Add to beginning
+            saveHistoryToStorage();
+            renderHistory();
+            return item.id;
+        }
+
+        function updateHistoryItem(id, updates) {
+            const item = processHistory.find(h => h.id === id);
+            if (item) {
+                Object.assign(item, updates);
+                if (updates.status === 'success' || updates.status === 'error') {
+                    item.endTime = Date.now();
+                }
+                saveHistoryToStorage();
+                renderHistory();
+            }
+        }
+
+        // Update only progress (without full re-render for performance)
+        function updateHistoryItemProgress(id, progress) {
+            const item = processHistory.find(h => h.id === id);
+            if (item && item.status === 'processing') {
+                item.progress = progress;
+                // Update DOM directly for performance
+                const historyItem = document.querySelector(`.history-item[data-id="${id}"]`);
+                if (historyItem) {
+                    const progressFill = historyItem.querySelector('.history-progress-fill');
+                    const progressText = historyItem.querySelector('.history-progress-text');
+                    if (progressFill) {
+                        progressFill.style.width = progress + '%';
+                    }
+                    if (progressText) {
+                        progressText.textContent = progress + '% - Sedang diproses...';
+                    }
+                }
+            }
+        }
+
+        function clearHistory() {
+            if (confirm('Hapus semua riwayat export?')) {
+                processHistory = [];
+                saveHistoryToStorage();
+                renderHistory();
+            }
+        }
+
+        function formatTime(timestamp) {
+            const date = new Date(timestamp);
+            return date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function formatDuration(start, end) {
+            if (!end) return '';
+            const seconds = Math.round((end - start) / 1000);
+            if (seconds < 60) return `${seconds}s`;
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            return `${minutes}m ${remainingSeconds}s`;
+        }
+
+        function renderHistory() {
+            const container = document.getElementById('historyContainer');
+
+            if (!container) return;
+
+            // Build header HTML (always shown)
+            const headerHtml = `<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; padding-bottom: 12px; border-bottom: 1px solid #E2E8F0;">
+                <h3 style="margin: 0; color: #1E293B; font-size: 1rem;">📜 Riwayat Export</h3>
+                <button class="history-clear-btn" id="clearHistoryBtn" style="margin: 0; ${processHistory.length === 0 ? 'display: none;' : ''}">🗑️ Hapus Semua</button>
+            </div>`;
+
+            // Empty state HTML
+            const emptyStateHtml = `<div class="history-empty" id="historyEmpty" style="${processHistory.length > 0 ? 'display: none;' : ''}">
+                <div class="history-empty-icon">📋</div>
+                <p style="color: #475569; font-weight: 500;">Belum ada riwayat export</p>
+                <p style="font-size: 0.8rem; color: #94A3B8;">Export ke Google Sheets untuk melihat riwayat di sini</p>
+            </div>`;
+
+            // If empty, just show header and empty state
+            if (processHistory.length === 0) {
+                container.innerHTML = headerHtml + emptyStateHtml;
+                return;
+            }
+
+            // Build history items HTML
+            let html = '';
+            processHistory.forEach(item => {
+                const statusIcon = item.status === 'processing' ? '🔄' :
+                    item.status === 'success' ? '✅' : '❌';
+
+                const meta = item.type === 'new'
+                    ? 'Spreadsheet Baru'
+                    : `Export ke "${item.sheetName}" (${item.cellRef || 'A1'})`;
+
+                const timeInfo = formatTime(item.startTime);
+                const duration = item.endTime ? ` • ${formatDuration(item.startTime, item.endTime)}` : '';
+
+                let actionsHtml = '';
+                if (item.status === 'success' && item.url) {
+                    actionsHtml = `<a href="${item.url}" target="_blank" class="history-btn history-btn-primary">📊 Buka</a>`;
+                } else if (item.status === 'error') {
+                    actionsHtml = `<span class="history-btn history-btn-secondary" style="cursor: default;">Gagal</span>`;
+                } else if (item.status === 'processing') {
+                    actionsHtml = `<span class="history-btn history-btn-secondary" onclick="showProgressModal('${item.id}')" style="cursor: pointer;">👁️ Lihat</span>`;
+                }
+
+                let progressHtml = '';
+                if (item.status === 'processing') {
+                    progressHtml = `
+                        <div class="history-progress">
+                            <div class="history-progress-fill" style="width: ${item.progress || 0}%"></div>
+                        </div>
+                        <div class="history-progress-text" style="font-size: 0.7rem; color: #64748B; margin-top: 4px;">${item.progress || 0}% - Sedang diproses...</div>
+                    `;
+                }
+
+                html += `
+                    <div class="history-item ${item.status}" data-id="${item.id}">
+                        <div class="history-icon">${statusIcon}</div>
+                        <div class="history-content">
+                            <div class="history-filename">${item.filename}</div>
+                            <div class="history-meta">${timeInfo}${duration} • ${meta}</div>
+                            ${item.error ? `<div class="history-meta" style="color: #DC2626;">${item.error}</div>` : ''}
+                            ${progressHtml}
+                        </div>
+                        <div class="history-actions">
+                            ${actionsHtml}
+                        </div>
+                    </div>
+                `;
+            });
+            // Set container with header, empty state (hidden), and items
+            container.innerHTML = headerHtml + emptyStateHtml + html;
+
+            // Re-attach clear button handler
+            document.getElementById('clearHistoryBtn').onclick = clearHistory;
+        }
+
+        // Initialize history on load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadHistoryFromStorage();
+
+            // Clear history button
+            const clearBtn = document.getElementById('clearHistoryBtn');
+            if (clearBtn) {
+                clearBtn.onclick = clearHistory;
+            }
+        });
+
+        console.log('Excel Tools (AHA Commerce) v2.6 initialized');
     </script>
 </body>
 
